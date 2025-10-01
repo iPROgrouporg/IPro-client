@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    padding: 0;
+    bottom: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #0A0F1F;
+    font-family: "Montserrat";
+}
+
+a {
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+}
+
+/* //////////////////////////////////////// */
+@keyframes marquee {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+.marquee {
+    display: flex;
+    animation: marquee 100s linear infinite;
+}
+
+/* //////////////////////////////////////// */
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #121212;
+    position: relative;
+    /* <--- bu yerda */
+}
+
+
+.central {
+    width: 10em;
+    height: 10em;
+    border-radius: 50%;
+    box-shadow: 0.5em 1em 1em blueviolet,
+        -0.5em 0.5em 1em blue,
+        0.5em -0.5em 1em purple,
+        -0.5em -0.5em 1em cyan;
+}
+
+.external-shadow {
+    width: 10em;
+    height: 10em;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 3s linear infinite;
+    background-color: #212121;
+    box-shadow: 0.5em 0.5em 3em blueviolet,
+        -0.5em 0.5em 3em blue,
+        0.5em -0.5em 3em purple,
+        -0.5em -0.5em 3em cyan;
+}
+
+.intern {
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    z-index: 2;
+    color: #0086EE;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(180deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* //////////////////////////////////////// */
+@layer utilities {
+    .custom-mask-button {
+        -webkit-mask: url("https://raw.githubusercontent.com/robin-dela/css-mask-animation/master/img/nature-sprite.png");
+        mask: url("https://raw.githubusercontent.com/robin-dela/css-mask-animation/master/img/nature-sprite.png");
+        -webkit-mask-size: 2300% 100%;
+        mask-size: 2300% 100%;
+        -webkit-animation: ani2 0.7s steps(22) forwards;
+        animation: ani2 0.7s steps(22) forwards;
+    }
+
+    .custom-mask-button:hover {
+        -webkit-animation: ani 0.7s steps(22) forwards;
+        animation: ani 0.7s steps(22) forwards;
+        color: white;
+    }
+}
+
+@keyframes ani {
+    from {
+        -webkit-mask-position: 0 0;
+        mask-position: 0 0;
+    }
+
+    to {
+        -webkit-mask-position: 100% 0;
+        mask-position: 100% 0;
+    }
+}
+
+@keyframes ani2 {
+    from {
+        -webkit-mask-position: 100% 0;
+        mask-position: 100% 0;
+    }
+
+    to {
+        -webkit-mask-position: 0 0;
+        mask-position: 0 0;
+    }
+}
+/* ///////////////////////////////////// */
