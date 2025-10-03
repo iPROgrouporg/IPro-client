@@ -38,7 +38,7 @@ const Register = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Validation step 1
+  // Step 1 validation
   const validateStep1 = () => {
     const newErrors = {};
     if (!formData.firstName || formData.firstName.trim().length < 3) {
@@ -60,7 +60,7 @@ const Register = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Validation step 2
+  // Step 2 validation
   const validateStep2 = () => {
     const newErrors = {};
     if (!formData.smsCode || formData.smsCode.length !== 6) {
@@ -70,7 +70,7 @@ const Register = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Submit - ASOSIY TUZATISH
+  // Submit handler
   const handleSubmit = () => {
     if (currentStep === 1) {
       const isValid = validateStep1();
@@ -87,11 +87,10 @@ const Register = () => {
     }
   };
 
-  // Telefon input - TUZATILGAN
+  // Phone input focus/blur
   const handlePhoneFocus = () => {
     if (!formData.phone || formData.phone === "") {
       setFormData((prev) => ({ ...prev, phone: "+998" }));
-      // setTimeout ni olib tashladim, bu muammo chiqarardi
       if (phoneRef.current) {
         const len = phoneRef.current.value.length;
         phoneRef.current.setSelectionRange(len, len);
@@ -105,15 +104,17 @@ const Register = () => {
     }
   };
 
-  const inputClass =
-    "w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base";
+  // 📌 Login.jsx dagi input stylega moslashtirilgan
+  const inputClass = `w-full rounded-md border-2 px-4 py-2 focus:outline-none 
+    border-gray-300 focus:border-blue-500 text-sm sm:text-base
+    transition`;
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white">
       {/* Chap panel */}
       <div className="flex-1 lg:flex-[7.5] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between w-full px-4 sm:px-6 lg:px-10 py-4">
+        <div className="flex items-center justify-between px-4 sm:px-6 lg:px-10 py-4">
           <img src={Logo} alt="Logo" className="w-20 sm:w-24" />
           <div className="flex items-center gap-x-3">
             <p className="text-xs sm:text-sm">Ro'yxatdan o'tganmisiz?</p>
@@ -127,9 +128,8 @@ const Register = () => {
         </div>
 
         {/* Form */}
-        <div className="flex flex-1 items-center justify-center px-4 sm:px-6">
-          <div className="w-full max-w-md sm:max-w-sm md:max-w-md lg:max-w-md">
-            {/* Title */}
+        <div className="flex flex-1 items-center justify-center px-4 sm:px-6 pb-10 sm:pb-16">
+          <div className="w-full max-w-md">
             <div className="text-center mb-6">
               <h1 className="text-2xl sm:text-3xl font-bold mb-2">IPRO GROUP</h1>
               <p className="text-gray-400 text-sm sm:text-base">
@@ -139,7 +139,7 @@ const Register = () => {
               </p>
             </div>
 
-            {/* Step 1 - KEY QO'SHILDI */}
+            {/* STEP 1 */}
             {currentStep === 1 && (
               <div key="step1">
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -152,7 +152,9 @@ const Register = () => {
                       placeholder="Ismingiz"
                       className={inputClass}
                     />
-                    {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+                    {errors.firstName && (
+                      <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
+                    )}
                   </div>
                   <div className="w-full">
                     <input
@@ -163,7 +165,9 @@ const Register = () => {
                       placeholder="Familiyangiz"
                       className={inputClass}
                     />
-                    {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
+                    {errors.lastName && (
+                      <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
+                    )}
                   </div>
                 </div>
 
@@ -180,7 +184,9 @@ const Register = () => {
                       placeholder="Telefon raqamingizni kiriting"
                       className={inputClass}
                     />
-                    {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                    {errors.phone && (
+                      <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+                    )}
                   </div>
 
                   <div>
@@ -192,7 +198,9 @@ const Register = () => {
                       placeholder="Parol"
                       className={inputClass}
                     />
-                    {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+                    {errors.password && (
+                      <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                    )}
                   </div>
 
                   <div>
@@ -204,13 +212,17 @@ const Register = () => {
                       placeholder="Parolni takrorlang"
                       className={inputClass}
                     />
-                    {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
+                    {errors.confirmPassword && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.confirmPassword}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Step 2 - KEY QO'SHILDI */}
+            {/* STEP 2 */}
             {currentStep === 2 && (
               <div key="step2" className="mt-4 space-y-3">
                 <input
@@ -222,11 +234,13 @@ const Register = () => {
                   className={inputClass}
                   inputMode="numeric"
                 />
-                {errors.smsCode && <p className="text-red-500 text-xs mt-1">{errors.smsCode}</p>}
+                {errors.smsCode && (
+                  <p className="text-red-500 text-xs mt-1">{errors.smsCode}</p>
+                )}
               </div>
             )}
 
-            {/* Step 3 - KEY QO'SHILDI */}
+            {/* STEP 3 */}
             {currentStep === 3 && (
               <div key="step3" className="text-center mt-6">
                 <p className="text-blue-600 font-semibold text-lg">
@@ -236,7 +250,7 @@ const Register = () => {
             )}
 
             {/* Progress */}
-            <div className="w-full max-w-sm mt-4 mx-auto">
+            <div className="w-full max-w-sm mt-5 mx-auto">
               <ProgressBar currentStep={currentStep} />
             </div>
 
