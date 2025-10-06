@@ -4,7 +4,7 @@ import Header from '../components/layouts/header';
 import Footer from '../components/layouts/footer';
 import Teams from './teams';
 import { Worker } from './Worker';
-import Career from './career';
+import Vacancy from './vacancy/Vacancy.jsx';
 /////////////////////////////////////////////////////////////////////////////////////////
 const team = () => {
     return (
@@ -12,7 +12,7 @@ const team = () => {
             <Header />
             <main className='mt-20'>
                 <Teams CardBg={CardBg} StarsRightImg={StarsRightImg}/>
-                <Career/>
+                <Vacancy/>
                 <Worker/>
             </main>
         </>

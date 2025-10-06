@@ -120,7 +120,7 @@ const Header = () => {
               { name: t("team"), path: "/team" },
               { name: t("portfolio"), path: "/portfolio" },
               { name: t("services"), path: "/services" },
-              { name: t("careers"), path: "/careers" },
+              { name: t("careers"), path: "/vacancy" },
             ].map((item, index) => (
               <NavLink
                 key={index}

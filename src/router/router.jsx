@@ -7,7 +7,7 @@ import AboutUs from "../pages/aboutus";
 import Team from "../pages/team";
 import Portfolio from "../pages/portfolio";
 import Services from "../pages/services";
-import Careers from "../pages/career";
+import Careers from "../pages/vacancy/Vacancy.jsx";
 import UserProfile from "../pages/userpanel/user";
 import Vacansy from "../pages/vacansy";
 import ProjectPage from "../pages/projectpage";

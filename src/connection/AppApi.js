@@ -1,3 +1,4 @@
 export const APP_API = {
-    service: "/service/all"
+    service: "/service",
+    vacancy:'/vacancy'
 }
