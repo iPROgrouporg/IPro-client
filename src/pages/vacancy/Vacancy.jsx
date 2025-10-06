@@ -26,8 +26,6 @@ const Vacancy = () => {
     }
 
     const showMoreJobs = () => setVisibleJobs((prev) => prev + 6);
-    const handleClick = (slug) => navigate(`/vacansy/${slug}`);
-
     useEffect(() => {
         window.scrollTo(0, 0);
         AOS.init({duration: 1500});
@@ -150,7 +148,6 @@ const Vacancy = () => {
                         </motion.div>
                     </div>
                 </section>
-
             </main>
         </>
     );

@@ -1,8 +1,10 @@
 import axios from "axios";
+import {APP_API} from "./AppApi.js";
 
 export const base_url = axios.create({
     baseURL: "http://localhost:2025/api/v1",
 });
+export const img_url = "http://localhost:2025/api/v1/files/image/"
 
 const api = {
     getAll: (url) => base_url.get(url),
@@ -13,6 +15,10 @@ const api = {
 };
 
 export const vacancyApi = {
-    getAll: () => api.getAll("/vacancy/all"),
-    getOne: (id) => api.getOne("/vacancy", id),
+    getAll: () => api.getAll(`${APP_API.vacancy}/all`),
+    getOne: (id) => api.getOne(`${APP_API.vacancy}`, id),
 };
+export const servicesApi = {
+    getAll: () => api.getAll(`${APP_API.service}/all`),
+    getOne: (id) => api.getOne(`${APP_API.service}`, id)
+}
