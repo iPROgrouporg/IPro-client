@@ -3,12 +3,12 @@ import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Home from "./pages/home";
 import AboutUs from "./pages/aboutus";
 import Team from "./pages/team";
-import Portfolio from "./pages/portfolio";
+import Portfolio from "./pages/portfolio/Portfolio.jsx";
 import Services from "./pages/services/Services.jsx";
 import UserProfile from "./pages/userpanel/user";
-import ProjectPage from "./pages/projectpage";
+import ProjectPage from "./pages/portfolio/ProjectsPage.jsx";
 import NotFound from "./pages/notfound";
-import ProjectInfo from "./pages/ProjectInfo";
+import ProjectInfo from "./pages/portfolio/ProjectInfo.jsx";
 import AuthGuard from "./connection/AuthGuard";
 import MainLayout from "./layouts/mainLayout/mainlayout";
 

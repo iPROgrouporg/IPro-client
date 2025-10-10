@@ -13,7 +13,6 @@ const MainLayout = () => {
             <Marquee />
             <Footer />
 
-            {/* 🚀 Floating Operator Button */}
             <button
                 className="fixed bottom-16 right-6 flex items-center justify-center
                            w-16 h-16 bg-blue-600 hover:bg-blue-700 text-white

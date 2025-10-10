@@ -78,9 +78,10 @@ const ServicesItem = () => {
                         <div className="mt-8 flex justify-center lg:justify-start">
                             <button
                                 className="group relative overflow-hidden bg-gradient-to-r from-cyan-500 to-blue-700 hover:from-blue-600 hover:to-purple-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out">
-      <span className="flex items-center gap-2">
-        <FaDownload className="group-hover:translate-y-1 transition-transform duration-300"/> Yuklab olish
-      </span>
+                                  <span className="flex items-center gap-2">
+                                     <FaDownload
+                                         className="group-hover:translate-y-1 transition-transform duration-300"/> Yuklab olish
+                                  </span>
                             </button>
                         </div>
                     </div>

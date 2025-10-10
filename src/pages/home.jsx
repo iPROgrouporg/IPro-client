@@ -9,7 +9,7 @@ import Primary from './primary';
 import Scroller from './scroller';
 import Teams from './teams';
 import Faq from './Faq';
-import PrimaryService from './PrimaryService';
+import PrimaryService from './services/PrimaryService.jsx';
 
 import Video from '../assets/video/ipro.mp4';
 import Logocloud from '../assets/images/iPro11.png';

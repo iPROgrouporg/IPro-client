@@ -1,4 +1,7 @@
 export const APP_API = {
     service: "/service",
-    vacancy:'/vacancy'
+    vacancy: '/vacancy',
+    portfolio: "portfolio",
+    portfolioOtziv: "portfolio-otviz"
+
 }
