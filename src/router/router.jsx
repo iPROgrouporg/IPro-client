@@ -2,9 +2,9 @@ import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../layouts/mainLayout/mainlayout";
 
 // Sahifalar
-import Home from "../pages/home";
-import AboutUs from "../pages/aboutus";
-import Team from "../pages/team";
+import Home from "../pages/home/home.jsx";
+import AboutUs from "../pages/about/aboutus.jsx";
+import Team from "../pages/team/team.jsx";
 import Portfolio from "../pages/portfolio/Portfolio.jsx";
 import Services from "../pages/services/Services.jsx";
 import Careers from "../pages/vacancy/Vacancy.jsx";
@@ -12,7 +12,7 @@ import UserProfile from "../pages/userpanel/user";
 import Vacansy from "../pages/vacansy";
 import ProjectPage from "../pages/portfolio/ProjectsPage.jsx";
 import SingleService from "../pages/services/ServicesItem.jsx";
-import NotFound from "../pages/notfound";
+import NotFound from "../components/notfount/notfound.jsx";
 import AuthGuard from "../connection/AuthGuard";
 import Footer from "../components/layouts/footer";
 

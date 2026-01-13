@@ -45,7 +45,7 @@ const Portfolio = () => {
                     <div className="container mx-auto mb-10 px-5 xl:px-14">
                         <h1
                             data-aos="fade-up"
-                            className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 md:text-[96px] text-[40px] font-black ml-5 mb-10 text-center md:text-left drop-shadow-[0_5px_20px_rgba(0,112,244,0.8)]"
+                            className="text-transparent text-white bg-clip-text bg-gradient-to-r md:text-[96px] text-[40px] font-black ml-5 mb-10 text-center md:text-left drop-shadow-[0_5px_20px_rgba(0,112,244,0.8)]"
                         >
                             {t("projects")}
                         </h1>

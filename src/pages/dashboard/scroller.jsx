@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
-import Logomarqee from "../components/ui/logomarquee";
-import Achievements from "../components/ui/achivements";
+import Logomarqee from "../../components/ui/logomarquee.jsx";
+import Achievements from "../../components/ui/achivements.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -67,21 +67,7 @@ const Scroller = ({ t, Logocloud, Video }) => {
           </section>
 
           {/* Video and Text Section */}
-          <div
-              className="container mx-auto flex flex-col md:flex-row items-center justify-start gap-6 mt-16 md:mt-24 mb-16 md:mb-24 px-5 md:px-10 lg:px-20"
-              data-aos="fade-up"
-          >
-            <video
-                className="w-full max-w-[250px] sm:max-w-[300px] md:max-w-[350px] lg:w-[265px] rounded-2xl shadow-lg ring-1 ring-white/10"
-                controls
-                src={Video}
-                autoPlay
-                loop
-            />
-            <h1 className="text-white font-bold text-xl sm:text-2xl md:text-3xl text-center md:text-left">
-              {t("see_our_company")}
-            </h1>
-          </div>
+
 
           {/* Achievements section */}
           <div data-aos="fade-up">

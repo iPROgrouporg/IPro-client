@@ -6,28 +6,27 @@ import "../../i18.jsx";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import {img_url, servicesApi} from "../../connection/BaseUrl.js";
-
+import {motion} from "framer-motion";
 
 const Services = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
-    const [services, setServices] = useState([])
-
+    const [services, setServices] = useState([]);
 
     const getAll = async () => {
         try {
-            const res = await servicesApi.getAll()
-            setServices(res.data)
-            console.log(res.data)
+            const res = await servicesApi.getAll();
+            setServices(res.data);
+            console.log(res.data);
         } catch (err) {
-            console.log("vacancy error" + err)
+            console.log("services error", err);
         }
-    }
+    };
 
     useEffect(() => {
         AOS.init({duration: 1500});
         window.scrollTo(0, 0);
-        getAll()
+        getAll();
     }, []);
 
     return (
@@ -36,28 +35,55 @@ const Services = () => {
             <main className="mt-20 px-5 xl:px-14 container mx-auto">
                 <h1
                     data-aos="fade-up"
-                    className="text-center md:text-left text-[42px] md:text-[96px] font-extrabold tracking-tight uppercase mb-16
-             text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-500 to-indigo-700 drop-shadow-[0_10px_20px_rgba(0,115,255,0.5)]"
+                    className="text-center md:text-left text-[42px] md:text-[96px] font-extrabold tracking-tight  mb-16
+             text-transparent bg-clip-text bg-gradient-to-r text-white  drop-shadow-[0_10px_20px_rgba(0,115,255,0.5)]"
                 >
                     {t("services")}
                 </h1>
 
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-16">
                     {services.map((service, index) => (
-                        <div
+                        <motion.div
                             key={index}
                             data-aos="zoom-in-up"
                             data-aos-delay={index * 100}
-                            className="bg-[#0f111c] backdrop-blur-sm border border-[#1e2638] hover:border-[#3b82f6] hover:shadow-[0_15px_40px_rgba(0,180,255,0.3)] rounded-2xl overflow-hidden transform hover:-translate-y-2 transition-all duration-500 cursor-pointer"
                             onClick={() => service.active && navigate(`/services-info/${service.id}`)}
-
+                            whileHover={service.active ? {scale: 1.03} : {}}
+                            className={`relative bg-[#0f111c] backdrop-blur-sm border border-[#1e2638] 
+                                rounded-2xl overflow-hidden transform transition-all duration-500 
+                                ${service.active ? 'cursor-pointer hover:border-[#3b82f6] hover:shadow-[0_15px_40px_rgba(0,180,255,0.3)] hover:-translate-y-2' : 'cursor-not-allowed'}
+                            `}
                         >
-                            <img src={`${img_url}${service.image}`}
-                                 alt={t(service.title)}
-                                 className="w-full h-44 object-cover rounded-t-2xl"/>
-                            <div className="p-5">
-                                <h2 className="text-blue-400 text-xl font-semibold mb-2 tracking-wide">{t(service.title.toUpperCase())}</h2>
+                            <img
+                                src={`${img_url}${service.image}`}
+                                alt={t(service.title)}
+                                className="w-full h-44 object-cover rounded-t-2xl"
+                            />
+
+                            {!service.active && (
+                                <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center z-20">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={1.8}
+                                        stroke="white"
+                                        className="w-12 h-12 mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M16 10V7a4 4 0 00-8 0v3m-2 0h12a2 2 0 012 2v7a2 2 0 01-2 2H6a2 2 0 01-2-2v-7a2 2 0 012-2z"
+                                        />
+                                    </svg>
+                                    <p className="text-gray-300 text-sm">Ushbu xizmat hozirda faol emas</p>
+                                </div>
+                            )}
+
+                            <div className="p-5 relative z-10">
+                                <h2 className="text-blue-400 text-xl font-semibold mb-2 tracking-wide">
+                                    {t(service.title.toUpperCase())}
+                                </h2>
                                 <p className="text-gray-400 text-sm">
                                     {t(
                                         service.description.length > 32
@@ -66,7 +92,7 @@ const Services = () => {
                                     )}
                                 </p>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             </main>

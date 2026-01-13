@@ -35,3 +35,10 @@ export const portfolioApi = {
 export const portfolioOtzivApi = {
     getOne: (id) => api.getOne(`${APP_API.portfolioOtziv}`, id)
 }
+export const authApi = {
+    login: (url, data) => api.create(`${APP_API.login}`, data),
+    register: (url, data) => base_url.post(`${APP_API.register}`, data),
+}
+export const supportApi = {
+    send: (url, data) => api.create(`${APP_API.support}`, data),
+}

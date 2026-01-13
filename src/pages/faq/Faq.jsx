@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import {IoMdClose} from "react-icons/io";
 import {FaPlus, FaMinus} from 'react-icons/fa';
-import ContactWithMap from '../components/ui/contactwithmap';
+import ContactWithMap from '../../components/ui/contactwithmap.jsx';
+import {supportApi} from "../../connection/BaseUrl.js";
 
 const faqs = [
     {
@@ -35,6 +36,10 @@ const faqs = [
 ];
 
 const Faq = ({t, StarsRightImg, IproIMage}) => {
+    const [fullName, setFullName] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [description, setDescription] = useState("");
+
     const [openIndex, setOpenIndex] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedIssue, setSelectedIssue] = useState("");
@@ -53,8 +58,29 @@ const Faq = ({t, StarsRightImg, IproIMage}) => {
         setSelectedIssue("");
     };
 
+    const send = async () => {
+        try {
+            const data = {
+                fullName,
+                phoneNumber,
+                description,
+                issue: selectedIssue
+            };
+
+            const res = await supportApi.send('', data);
+            console.log("Yuborildi:", res.data);
+
+            setFullName("");
+            setPhoneNumber("");
+            setDescription("");
+            closeModal();
+        } catch (err) {
+            console.log("Xatolik:", err);
+        }
+    };
+
     return (
-        <section className="relative w-full pt-[90px] mb-10 overflow-hidden">
+        <section className="relative  w-full pt-[90px] mb-10 overflow-hidden">
             <div className="relative -z-10 top-[800px]">
                 <img
                     className="absolute hidden md:flex bottom-0 -right-10"
@@ -63,9 +89,9 @@ const Faq = ({t, StarsRightImg, IproIMage}) => {
                 />
             </div>
 
-            <div className="container mx-auto px-4 sm:px-6 md:px-10">
+            <div className="container mx-auto   px-4 sm:px-6 md:px-10">
                 <h1
-                    className="text-3xl sm:text-5xl md:text-[80px] text-center md:text-left font-black leading-[0.95] mb-10 bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-transparent bg-clip-text drop-shadow-[0_5px_20px_rgba(0,112,244,0.8)]"
+                    className="text-3xl text-white sm:text-5xl md:text-[80px] text-center md:text-left font-black leading-[0.95] mb-10 bg-gradient-to-r  text-transparent bg-clip-text drop-shadow-[0_5px_20px_rgba(0,112,244,0.8)]"
                     data-aos="fade-up"
                 >
                     {t("have_a_question")}
@@ -147,9 +173,9 @@ const Faq = ({t, StarsRightImg, IproIMage}) => {
             {isModalOpen && (
                 <>
                     <div
-                        className="fixed inset-0 z-[1000] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4 py-8">
+                        className="fixed inset-0 z-[1000]  bg-black/70 backdrop-blur-sm flex items-center justify-center px-4 py-8">
                         <div
-                            className="bg-[#0f172a]/90 backdrop-blur-lg w-full max-w-3xl max-h-[95vh] overflow-y-auto p-5 sm:p-8 rounded-3xl shadow-2xl relative z-[1001] border border-white/10"
+                            className=" bg-[#0f172a]/90 backdrop-blur-lg w-full max-w-5xl max-h-[95vh] overflow-y-auto p-5 sm:p-8 rounded-3xl shadow-2xl relative z-[1001] border border-white/10"
                             data-aos="zoom-in"
                         >
                             {/* Close Button */}
@@ -183,21 +209,27 @@ const Faq = ({t, StarsRightImg, IproIMage}) => {
                                     <form className="flex flex-col gap-4 sm:gap-5">
                                         <input
                                             type="text"
+                                            value={fullName}
+                                            onChange={(e) => setFullName(e.target.value)}
                                             placeholder={t("your_name")}
                                             className="px-4 sm:px-5 py-3 rounded-xl bg-[#1e293b] text-white placeholder-gray-400 shadow-inner border border-white/10 focus:outline-none"
                                         />
                                         <input
                                             type="tel"
+                                            value={phoneNumber}
+                                            onChange={(e) => setPhoneNumber(e.target.value)}
                                             placeholder={t("phone_number")}
                                             className="px-4 sm:px-5 py-3 rounded-xl bg-[#1e293b] text-white placeholder-gray-400 shadow-inner border border-white/10 focus:outline-none"
                                         />
                                         <textarea
                                             placeholder={t("problem_details")}
+                                            value={description}
+                                            onChange={(e) => setDescription(e.target.value)}
                                             rows={5}
                                             className="px-4 sm:px-5 py-3 rounded-xl bg-[#1e293b] text-white placeholder-gray-400 resize-none shadow-inner border border-white/10 focus:outline-none"
                                         ></textarea>
                                         <button
-                                            type="submit"
+                                            onClick={send}
                                             className="bg-white text-[#0072FF] w-full px-6 py-3 rounded-xl font-bold shadow-md hover:bg-gray-200 transition"
                                         >
                                             {t("submit")}

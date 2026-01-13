@@ -3,22 +3,22 @@ import {useTranslation} from "react-i18next";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
-import Header from '../components/layouts/header';
-import ScrollProgressBar from '../components/progressLine/progressline';
-import Primary from './primary';
-import Scroller from './scroller';
-import Teams from './teams';
-import Faq from './Faq';
-import PrimaryService from './services/PrimaryService.jsx';
+import Header from '../../components/layouts/header.jsx';
+import ScrollProgressBar from '../../components/progressLine/progressline.jsx';
+import Primary from '../dashboard/primary.jsx';
+import Scroller from '../dashboard/scroller.jsx';
+import Teams from '../team/teams.jsx';
+import Faq from '../faq/Faq.jsx';
+import PrimaryService from '../services/PrimaryService.jsx';
 
-import Video from '../assets/video/ipro.mp4';
-import Logocloud from '../assets/images/iPro11.png';
-import CardBg from '../assets/images/cardbg.png';
-import StarsRightImg from "../assets/images/starsright.png";
-import StarsLeftImg from "../assets/images/starsleft.png";
-import IproIMage from "../assets/images/iproLogoRegister.png";
+import Video from '../../assets/video/ipro.mp4';
+import Logocloud from '../../assets/images/iPro11.png';
+import CardBg from '../../assets/images/cardbg.png';
+import StarsRightImg from "../../assets/images/starsright.png";
+import StarsLeftImg from "../../assets/images/starsleft.png";
+import IproIMage from "../../assets/images/iproLogoRegister.png";
 
-import TestimonialSlider from '../components/ui/scrollcardworkers';
+import TestimonialSlider from '../../components/ui/scrollcardworkers.jsx';
 
 const Home = () => {
     const {t} = useTranslation();
