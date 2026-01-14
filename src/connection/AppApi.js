@@ -3,8 +3,8 @@ export const APP_API = {
     register: "/auth/register",
     service: "/service",
     vacancy: '/vacancy',
-    portfolio: "portfolio",
-    portfolioOtziv: "portfolio-otviz",
-    support:"/support/send"
+    portfolio: "/portfolio",
+    portfolioOtziv: "/portfolio-otviz",
+    support: "/support/send"
 
 }

@@ -38,11 +38,11 @@ const Portfolio = () => {
             <Header/>
             <main className='mt-20 relative z-10'>
                 <section>
-                    <div className="absolute right-0 -z-10 animate-pulse">
-                        <img src={Stars} alt="" className="opacity-40"/>
-                    </div>
+                    {/*<div className="absolute right-0 -z-10 animate-pulse">*/}
+                    {/*    <img src={Stars} alt="" className="opacity-40"/>*/}
+                    {/*</div>*/}
 
-                    <div className="container mx-auto mb-10 px-5 xl:px-14">
+                    <div className="container  mx-auto mb-10 px-5 xl:px-14">
                         <h1
                             data-aos="fade-up"
                             className="text-transparent text-white bg-clip-text bg-gradient-to-r md:text-[96px] text-[40px] font-black ml-5 mb-10 text-center md:text-left drop-shadow-[0_5px_20px_rgba(0,112,244,0.8)]"
@@ -56,7 +56,7 @@ const Portfolio = () => {
                                     key={type}
                                     data-aos="fade-up"
                                     data-aos-delay={`${index * 200}`}
-                                    className="flex items-center justify-between mb-10 flex-col md:flex-row overflow-hidden rounded-2xl py-12 md:py-6 bg-gradient-to-r from-[#1f2235] to-[#16182B] shadow-2xl md:px-10 transition-all duration-500"
+                                    className="flex items-center justify-between mb-10 flex-col md:flex-row overflow-hidden rounded-2xl py-12 md:py-6 border border-blue-400/20 shadow-2xl md:px-10 transition-all duration-500"
                                 >
                                     <div className="relative z-10">
                                         <h1 className="text-2xl md:text-4xl font-extrabold text-white mb-4 text-center md:text-left">
@@ -74,31 +74,34 @@ const Portfolio = () => {
                                     </div>
 
                                     <div
-                                        className="grid grid-cols-1 sm:grid-cols-2 md:flex md:gap-0 md:-space-x-20 mt-8 md:mt-0 w-full md:w-auto gap-4 md:overflow-visible relative z-0">
+                                        className="grid grid-cols-1 sm:grid-cols-2 md:flex md:gap-0 md:-space-x-20 mt-8 md:mt-0 w-full md:w-auto gap-4 md:overflow-visible relative z-0"
+                                    >
                                         {items.map((item, i) => (
                                             <div
                                                 key={item.id}
                                                 className="relative h-36 sm:h-40 md:h-[200px] w-full shadow-xl rounded-2xl transition-transform duration-500 cursor-pointer hover:z-20 hover:scale-[1.1] group"
                                                 data-aos-delay={`${(index + i) * 100}`}
-                                                onClick={()=>navigate(`/project/${item.id}`)}
+                                                onClick={() => navigate(`/project/${item.id}`)}
                                             >
                                                 <img
                                                     src={`${img_url}${item.image}`}
                                                     alt={item.title}
-                                                    className="h-full w-full object-cover rounded-2xl"
+                                                    className="h-full w-full object-cover rounded-2xl filter grayscale transition-all duration-500 group-hover:grayscale-0"
                                                 />
                                                 <div
-                                                    className="absolute inset-0 bg-black bg-opacity-40 transition-all duration-300 rounded-2xl group-hover:bg-opacity-0"></div>
+                                                    className="absolute inset-0 bg-black bg-opacity-20 transition-all duration-300 rounded-2xl group-hover:bg-opacity-0"
+                                                ></div>
                                             </div>
                                         ))}
                                     </div>
+
                                 </div>
                             )
                         ))}
 
-                        <div className="absolute left-0 top-[500px] -z-10 animate-fade-in">
-                            <img src={LefftStars} alt="" className="opacity-40"/>
-                        </div>
+                        {/*<div className="absolute left-0 top-[500px] -z-10 animate-fade-in">*/}
+                        {/*    <img src={LefftStars} alt="" className="opacity-40"/>*/}
+                        {/*</div>*/}
                     </div>
                 </section>
             </main>

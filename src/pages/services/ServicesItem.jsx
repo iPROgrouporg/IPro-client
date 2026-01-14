@@ -65,9 +65,9 @@ const ServicesItem = () => {
         <>
             <Header/>
             <main className='mt-32 mb-20 px-4 sm:px-6 lg:px-20 container mx-auto'>
-                <div className='flex flex-col-reverse lg:flex-row items-center gap-8 lg:gap-14 relative'>
+                <div className='flex justify-between  flex-col-reverse lg:flex-row items-center gap-8 lg:gap-14 relative'>
                     {/* Text */}
-                    <div className="text-center lg:text-left" data-aos="fade-up" data-aos-duration="800">
+                    <div className="text-center  lg:text-left" data-aos="fade-up" data-aos-duration="800">
                         <h1 className='text-white text-4xl sm:text-5xl lg:text-[72px] font-black mb-6 drop-shadow-[0_5px_20px_rgba(0,112,244,0.8)] bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 text-transparent bg-clip-text'>
                             {services.title.toUpperCase()}
                         </h1>
@@ -75,12 +75,19 @@ const ServicesItem = () => {
                             {services.description}
                         </p>
 
-                        <div className="mt-8 flex justify-center lg:justify-start">
+                        <div className="mt-8  flex gap-5 justify-center lg:justify-start">
                             <button
-                                className="group relative overflow-hidden bg-gradient-to-r from-cyan-500 to-blue-700 hover:from-blue-600 hover:to-purple-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out">
+                                className="group  relative overflow-hidden bg-gradient-to-r from-cyan-500 to-blue-700 hover:from-blue-600 hover:to-purple-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out">
                                   <span className="flex items-center gap-2">
                                      <FaDownload
                                          className="group-hover:translate-y-1 transition-transform duration-300"/> Yuklab olish
+                                  </span>
+                            </button>
+                            <button
+                                className="group  relative overflow-hidden bg-gradient-to-r from-cyan-500 to-blue-700 hover:from-blue-600 hover:to-purple-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out">
+                                  <span className="flex items-center gap-2">
+                                     <FaDownload
+                                         className="group-hover:translate-y-1 transition-transform duration-300"/> Buyurtma berish
                                   </span>
                             </button>
                         </div>
