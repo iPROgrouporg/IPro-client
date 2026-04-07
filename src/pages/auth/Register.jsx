@@ -2,10 +2,12 @@ import React, { useState, useRef } from "react";
 import Logo from "../../assets/icons/Logo.svg";
 import { StepperCircles, ProgressBar } from "./RegisterStepper";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const Register = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const phoneRef = useRef(null);
   const inputRefs = useRef([]); // 🔥 OTP refs
@@ -143,12 +145,12 @@ const Register = () => {
         <div className="flex items-center justify-between px-4 sm:px-6 lg:px-10 py-4">
           <img src={Logo} alt="Logo" className="w-20 cursor-pointer sm:w-24" onClick={() => navigate('/')} />
           <div className="flex items-center gap-x-3">
-            <p className="text-xs sm:text-sm">Ro'yxatdan o'tganmisiz?</p>
+            <p className="text-xs sm:text-sm">{t('loginText')}</p>
             <Link
               to="/login"
               className="rounded-md border-2 border-black py-1 px-4 sm:px-6 text-sm text-black font-medium hover:shadow-lg transition"
             >
-              Log In
+              {t('loginButton')}
             </Link>
           </div>
         </div>
@@ -160,9 +162,9 @@ const Register = () => {
             <div className="text-center mb-6">
               <h1 className="text-2xl sm:text-3xl font-bold mb-2">IPRO GROUP</h1>
               <p className="text-gray-400 text-sm sm:text-base">
-                {currentStep === 1 && "Ro'yxatdan o'ting"}
-                {currentStep === 2 && "Telefon raqamingizni tasdiqlang"}
-                {currentStep === 3 && "Tabriklaymiz!"}
+                {currentStep === 1 && `${t('pageSubtitleStep1')}`}
+                {currentStep === 2 && `${t('pageSubtitleStep2')}`}
+                {currentStep === 3 && `${t('pageSubtitleStep3')}`}
               </p>
             </div>
 
@@ -170,14 +172,14 @@ const Register = () => {
             {currentStep === 1 && (
               <div>
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <input name="firstName" placeholder="Ismingiz" className={inputClass} onChange={handleChange} />
-                  <input name="lastName" placeholder="Familiyangiz" className={inputClass} onChange={handleChange} />
+                  <input name={t('firstNamePlaceholder')} placeholder={t('firstNamePlaceholder')} className={inputClass} onChange={handleChange} />
+                  <input name={t('lastNamePlaceholder')} placeholder={t('lastNamePlaceholder')} className={inputClass} onChange={handleChange} />
                 </div>
 
                 <div className="mt-4 space-y-3">
-                  <input ref={phoneRef} name="phone" placeholder="Telefon" className={inputClass} onChange={handleChange} onFocus={handlePhoneFocus} onBlur={handlePhoneBlur} />
-                  <input type="password" name="password" placeholder="Parol" className={inputClass} onChange={handleChange} />
-                  <input type="password" name="confirmPassword" placeholder="Parolni takrorlang" className={inputClass} onChange={handleChange} />
+                  <input ref={phoneRef} name={t('phonePlaceholder')} placeholder={t('phonePlaceholder')} className={inputClass} onChange={handleChange} onFocus={handlePhoneFocus} onBlur={handlePhoneBlur} />
+                  <input type="password" name={t('passwordPlaceholder')} placeholder={t('passwordPlaceholder')} className={inputClass} onChange={handleChange} />
+                  <input type="password" name={t('confirmPasswordPlaceholder')} placeholder={t('confirmPasswordPlaceholder')} className={inputClass} onChange={handleChange} />
                 </div>
               </div>
             )}

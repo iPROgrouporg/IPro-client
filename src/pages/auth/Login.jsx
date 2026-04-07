@@ -3,9 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../assets/icons/Logo.svg";
 import LogoBig from "../../assets/images/iproLogoRegister.png";
 import { authApi } from "../../connection/BaseUrl.js";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
+    
 
     const [phoneNumber, setPhoneNumber] = useState("");
     const [password, setPassword] = useState("");
@@ -38,11 +41,11 @@ const Login = () => {
         const newErrors = {};
 
         if (!phoneNumber.trim()) {
-            newErrors.phoneNumber = "Telefon raqam kiriting!";
+            newErrors.phoneNumber = `${t('phoneError')}`
         }
 
         if (!password.trim()) {
-            newErrors.password = "Parol kiriting!";
+            newErrors.password = `${t('passwordError')}`;
         }
 
         if (Object.keys(newErrors).length > 0) {
@@ -98,12 +101,12 @@ const Login = () => {
                     />
 
                     <div className="flex items-center gap-3 md:gap-4">
-                        <p className="text-xs hidden sm:block">Hisobingiz yo‘qmi?</p>
+                        <p className="text-sm hidden sm:block">{t('registerText')}</p>
                         <Link
                             to="/register"
                             className="rounded-md border-2 border-black px-4 md:px-6 py-1 text-xs md:text-sm font-medium text-black transition hover:shadow-lg"
                         >
-                            Ro‘yxatdan o‘tish
+                            {t('registerButton')}
                         </Link>
                     </div>
                 </div>
@@ -115,10 +118,10 @@ const Login = () => {
                         {/* TITLE */}
                         <div className="mb-8 md:mb-10 text-center">
                             <h1 className="mb-3 text-2xl md:text-3xl font-bold">
-                                IPRO GROUP
+                                {t("pageTitle")}
                             </h1>
                             <p className="text-gray-400 text-sm md:text-base">
-                                Sizni saytimizda ko‘rganimizdan xursandmiz!
+                                {t("pageSubtitle")}
                             </p>
                         </div>
 
@@ -148,7 +151,7 @@ const Login = () => {
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Parolingizni kiriting"
+                                placeholder={t('passwordPlaceholder')}
                                 className={`w-full rounded-md border-2 px-4 py-3 text-sm md:text-base focus:outline-none ${
                                     errors.password
                                         ? "border-red-500"
@@ -170,7 +173,7 @@ const Login = () => {
                                     className="h-4 w-4 accent-blue-500"
                                 />
                                 <span className="text-gray-600 text-xs md:text-sm">
-                                    Yodda saqlash
+                                    {t('rememberMe')}
                                 </span>
                             </label>
 
@@ -178,7 +181,7 @@ const Login = () => {
                                 to="/recoveryPassword"
                                 className="text-gray-600 text-xs md:text-sm transition hover:text-blue-600"
                             >
-                                Parolni unutdingizmi?
+                                {t('forgotPassword')}
                             </Link>
                         </div>
 
@@ -189,7 +192,7 @@ const Login = () => {
                                 disabled={loading}
                                 className="w-full rounded-md bg-blue-600 py-3 text-sm md:text-base font-medium text-white transition hover:bg-blue-700 active:scale-95 disabled:opacity-50"
                             >
-                                {loading ? "Yuklanmoqda..." : "Kirish"}
+                                {loading ? t('loadingText') : t('loginButton')}
                             </button>
                         </div>
                     </div>
@@ -198,7 +201,7 @@ const Login = () => {
                 {/* FOOTER */}
                 <div className="mb-6 md:mb-10 mt-4 flex items-center justify-center">
                     <h5 className="text-center text-xs md:text-sm font-light text-gray-400">
-                        ©2020 - 2025 All Rights Reserved. Qpay
+                        {t('footerText')}
                     </h5>
                 </div>
             </div>
@@ -221,8 +224,7 @@ const Login = () => {
 
                 <div className="mt-16 px-6">
                     <p className="text-center text-sm font-semibold text-white">
-                        Sizni saytimizda ko‘rganimizdan hursandmiz! <br />
-                        Bizga ishonganingiz uchun rahmat.
+                        {t('rightSideMessage')}
                     </p>
                 </div>
             </div>

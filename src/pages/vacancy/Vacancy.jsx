@@ -16,7 +16,7 @@ const Vacancy = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [vacancy, setVacancy] = useState([]);
-    const [loading, setLoading] = useState(true); // loading state
+    const [loading, setLoading] = useState(true);
 
     const getAll = async () => {
         try {
