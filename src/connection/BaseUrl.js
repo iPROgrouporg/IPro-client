@@ -33,12 +33,12 @@ export const portfolioApi = {
     getByTypeRandom: () => api.getAll(`${APP_API.portfolio}/by-type-random`),
 };
 export const portfolioOtzivApi = {
-    getOne: (id) => api.getOne(`${APP_API.portfolioOtziv}`, id)
+    getOne: (id) => base_url.get(`${APP_API.portfolioOtziv}/${id}/otziv-get`)
 }
 export const authApi = {
     login: (url, data) => api.create(`${APP_API.login}`, data),
     register: (url, data) => base_url.post(`${APP_API.register}`, data),
 }
 export const supportApi = {
-    send: (url, data) => api.create(`${APP_API.support}`, data),
+    send: (data) => api.create(`${APP_API.support}/send`, data),
 }

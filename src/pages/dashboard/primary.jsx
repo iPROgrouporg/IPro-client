@@ -3,30 +3,9 @@
 import {useState, useEffect} from "react";
 import {motion} from "framer-motion";
 
-const slides = [
-    {
-        title: "Biz bilan kelajak sari!",
-        description: "Innovatsion texnologiyalar orqali biznesingizni yangi bosqichga olib chiqing.",
-        button: "Bog'lanish",
-    },
-    {
-        title: "Brending va Marketing",
-        description: "Brending, dizayn va raqamli marketingda professional yechimlar.",
-        button: "Xizmatlar",
-    },
-    {
-        title: "Mobil ilovalar yaratamiz",
-        description: "iOS va Android uchun funksional, zamonaviy ilovalar.",
-        button: "Portfolio",
-    },
-    {
-        title: "Websaytlar yaratishda yetakchimiz",
-        description: "Foydalanuvchiga qulay, tezkor va SEO ga mos websaytlar.",
-        button: "Biz haqimizda",
-    },
-];
 
-const Primary = () => {
+
+const Primary = ({t}) => {
     const [current, setCurrent] = useState(0);
 
     useEffect(() => {
@@ -35,6 +14,30 @@ const Primary = () => {
         }, 5000);
         return () => clearInterval(interval);
     }, []);
+
+
+    const slides = [
+    {
+        title: `${t("slideTitle1")}`,
+        description: `${t("slideDesc1")}`,
+        button: `${t("slideButton1")}`,
+    },
+    {
+        title: `${t("slideTitle2")}`,
+        description: `${t("slideDesc2")}`,
+        button: `${t("slideButton2")}`,
+    },
+    {
+        title: `${t("slideTitle3")}`,
+        description: `${t("slideDesc3")}`,
+        button: `${t("slideButton3")}`,
+    },
+    {
+        title: `${t("slideTitle4")}`,
+        description: `${t("slideDesc4")}`,
+        button: `${t("slideButton4")}`,
+    },
+];
 
     return (
         <div

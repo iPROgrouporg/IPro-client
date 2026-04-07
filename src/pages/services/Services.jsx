@@ -1,33 +1,47 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../components/layouts/header.jsx';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import "../../i18.jsx";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import {img_url, servicesApi} from "../../connection/BaseUrl.js";
-import {motion} from "framer-motion";
+import { img_url, servicesApi } from "../../connection/BaseUrl.js";
+import { motion } from "framer-motion";
+import { Loading } from '../../components/loading/Loading.jsx'; // Loading component
+import Footer from '../../components/layouts/footer.jsx';
 
 const Services = () => {
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [services, setServices] = useState([]);
+    const [loading, setLoading] = useState(true); // loading state
 
     const getAll = async () => {
         try {
             const res = await servicesApi.getAll();
-            setServices(res.data);
-            console.log(res.data);
+            setServices(res.data || []);
         } catch (err) {
             console.log("services error", err);
+            setServices([]);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        AOS.init({duration: 1500});
+        AOS.init({ duration: 1500 });
         window.scrollTo(0, 0);
+        setLoading(true);
         getAll();
     }, []);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-[70vh]">
+                <Loading />
+            </div>
+        );
+    }
 
     return (
         <>
@@ -35,8 +49,8 @@ const Services = () => {
             <main className="mt-20 px-5 xl:px-14 container mx-auto">
                 <h1
                     data-aos="fade-up"
-                    className="text-center md:text-left text-[42px] md:text-[96px] font-extrabold tracking-tight  mb-16
-             text-transparent bg-clip-text bg-gradient-to-r text-white  drop-shadow-[0_10px_20px_rgba(0,115,255,0.5)]"
+                    className="text-center md:text-left text-[42px] md:text-[96px] font-extrabold tracking-tight mb-16
+                        text-transparent bg-clip-text text-white drop-shadow-[0_10px_20px_rgba(0,115,255,0.5)]"
                 >
                     {t("services")}
                 </h1>
@@ -48,7 +62,7 @@ const Services = () => {
                             data-aos="zoom-in-up"
                             data-aos-delay={index * 100}
                             onClick={() => service.active && navigate(`/services-info/${service.id}`)}
-                            whileHover={service.active ? {scale: 1.03} : {}}
+                            whileHover={service.active ? { scale: 1.03 } : {}}
                             className={`relative bg-[#0f111c] backdrop-blur-sm border border-[#1e2638] 
                                 rounded-2xl overflow-hidden transform transition-all duration-500 
                                 ${service.active ? 'cursor-pointer hover:border-[#3b82f6] hover:shadow-[0_15px_40px_rgba(0,180,255,0.3)] hover:-translate-y-2' : 'cursor-not-allowed'}
@@ -96,6 +110,7 @@ const Services = () => {
                     ))}
                 </div>
             </main>
+            <Footer/>
         </>
     );
 };

@@ -7,6 +7,21 @@ i18n
         resources: {
             uz: {
                 translation: {
+                    slideTitle1:"Biz bilan kelajak sari!",
+                    slideTitle2:"Brend va marketing",
+                    slideTitle3:"Mobil ilovalar yaratamiz",
+                    slideTitle4:"Websaytlar yaratishda yetakchimiz",
+                    // 
+                    slideDesc1:"Innovatsion texnologiyalar orqali biznesingizni yangi bosqichga olib chiqing.",
+                    slideDesc2:"Brending, dizayn va raqamli marketingda professional yechimlar.",
+                    slideDesc3:"iOS va Android uchun funksional, zamonaviy ilovalar.",
+                    slideDesc4:"Foydalanuvchiga qulay, tezkor va SEO ga mos websaytlar.",
+                    // 
+                    slideButton1:"Bog'lanish",
+                    slideButton2:"Xizmatlar",
+                    slideButton3:"Portfolio",
+                    slideButton4:"Biz haqimizda",
+                    
                     yandex_map: "Yandex Xarita",
                     google_map: "Google Xarita",
                     follow_us: "Bizni kuzating",
@@ -230,6 +245,21 @@ i18n
             },
             en: {
                 translation: {
+                    slideTitle1: "Move Forward with Us!",
+                    slideTitle2:"Branding & Marketing",
+                    slideTitle3:"We Build Mobile Applications",
+                    slideTitle4:"Leaders in Website Development",
+
+                    slideDesc1:"Take your business to the next level with innovative technologies.",
+                    slideDesc2:"Professional solutions in branding, design, and digital marketing.",
+                    slideDesc3:"Functional and modern apps for iOS and Android.",
+                    slideDesc4:"User-friendly, fast, and SEO-optimized websites.",
+
+                    slideButton1:"Contact",
+                    slideButton2:"Services",
+                    slideButton3:"Portfolio",
+                    slideButton4:"About Us",
+                    
                     yandex_map: "Yandex map",
                     google_map: "Google map",
                     follow_us: "Follow Us",
@@ -450,6 +480,21 @@ i18n
             },
             ru: {
                 translation: {
+                    slideTitle1:"С нами — в будущее!",
+                    slideTitle2:"Брендинг и маркетинг",
+                    slideTitle3:"Создаём мобильные приложения",
+                    slideTitle4:"Лидеры в разработке веб-сайтов",
+                    // 
+                    slideDesc1:"Выведите свой бизнес на новый уровень с помощью инновационных технологий.",
+                    slideDesc2:"Профессиональные решения в брендинге, дизайне и цифровом маркетинге.",
+                    slideDesc3:"Функциональные и современные приложения для iOS и Android.",
+                    slideDesc4:"Удобные, быстрые и SEO-оптимизированные веб-сайты.",
+                    // 
+                    slideButton1:"Связаться",
+                    slideButton2:"Услуги",
+                    slideButton3:"Портфолио",
+                    slideButton4:"О нас",
+
                     yandex_map: "Яндекс карта",
                     google_map: "Карта Google",
                     follow_us: "подписаться",

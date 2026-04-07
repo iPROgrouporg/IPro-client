@@ -1,11 +1,14 @@
-// LangDropdown.jsx
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { FaEarthAsia } from "react-icons/fa6";
 import { MdArrowDropUp } from "react-icons/md";
-import "../../i18"
 
-const LangDropdown = ({ openDropdown, setOpenDropdown }) => {
+const flags = {
+  uz: "🇺🇿",
+  ru: "🇷🇺",
+  en: "🇬🇧",
+};
+
+const LangDropdown = ({ openDropdown, setOpenDropdown, currentLang }) => {
   const { i18n } = useTranslation();
 
   const changeLanguage = (lng) => {
@@ -14,23 +17,30 @@ const LangDropdown = ({ openDropdown, setOpenDropdown }) => {
   };
 
   return (
-   <div className="flex  relative dropdown">
-  <button onClick={() => setOpenDropdown(openDropdown === "lang" ? null : "lang")}>
-    <FaEarthAsia fontSize={25} color="white" className="mt-[-3px]"/>
+    <div className="relative dropdown flex items-center">
+  <button
+    onClick={() => setOpenDropdown(openDropdown === "lang" ? null : "lang")}
+    className="text-2xl"
+  >
+    {flags[currentLang] || "🌐"}
   </button>
 
   {openDropdown === "lang" && (
-    <div className="absolute top-12 -left-12 w-32 text-white rounded-lg shadow-lg z-50">
-      <MdArrowDropUp className="absolute -bottom-5 left-8 text-[#16182B] text-[48px]" />
-      <div className="py-2 px-3 bg-[#16182B] w-[117px] rounded-xl">
-        <button onClick={() => changeLanguage("uz")} className="block w-full text-center  border-gray-600 border-b-2 px-4 py-2">Uzbek</button>
-        <button onClick={() => changeLanguage("ru")} className="block w-full text-center border-gray-600 border-b-2 px-4 py-2">Русский</button>
-        <button onClick={() => changeLanguage("en")} className="block w-full text-center px-4 py-2">English</button>
+    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-20 z-50">
+      <div className="py-2 px-2 bg-[#16182B] rounded-xl flex flex-col gap-2 items-center">
+        {Object.entries(flags).map(([key, flag]) => (
+          <button
+            key={key}
+            onClick={() => changeLanguage(key)}
+            className="text-2xl hover:scale-110 transition-transform mb-1 last:mb-0"
+          >
+            {flag}
+          </button>
+        ))}
       </div>
     </div>
   )}
 </div>
-
   );
 };
 

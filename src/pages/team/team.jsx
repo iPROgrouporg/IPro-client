@@ -8,10 +8,12 @@ import Vacancy from '../vacancy/Vacancy.jsx';
 const team = () => {
     return (
         <>
+            <Header />
             <main className='mt-20'>
                 <Teams CardBg={CardBg} StarsRightImg={StarsRightImg}/>
-                <Vacancy/>
+                {/* <Vacancy/> */}
                 <Worker/>
+                <Footer/>
             </main>
         </>
     );

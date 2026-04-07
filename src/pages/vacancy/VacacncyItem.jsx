@@ -14,6 +14,7 @@ import {
     FaYoutube
 } from "react-icons/fa";
 import {VacancyForms} from "../../components/forms/vacancyForms/VacancyForms.jsx";
+import { Loading } from "../../components/loading/Loading.jsx";
 
 export const VacancyItem = () => {
     const navigate = useNavigate();
@@ -39,19 +40,11 @@ export const VacancyItem = () => {
         getOneVacancy();
     }, [id]);
 
-    if (!vacancy) {
-        return (
-            <>
-                <Header/>
-                <div className="text-white text-center mt-40 text-xl font-semibold">Job not found</div>
-                <Footer/>
-            </>
-        );
-    }
+    
     if (loading) {
         return (
             <div className="text-white text-center mt-20">
-                <h1 className="text-2xl">Loading...</h1>
+               <Loading/>
             </div>
         );
     }
@@ -139,6 +132,7 @@ export const VacancyItem = () => {
                 </section>
                 {showModal && <VacancyForms setShowModal={setShowModal}/>}
             </main>
+            <Footer/>
         </>
 
     );

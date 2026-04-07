@@ -26,40 +26,34 @@ export default function TestimonialSlider() {
         const cards = document.querySelectorAll(".testimonial-card");
 
         const tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: ".testimonial-cards-wrapper",
-                start: "top 90%", // 80% emas, 90% — ertaroq chiqadi
-                toggleActions: "restart none none none", // ❗ Har safar qayta ishlaydi
-                once: false,
-            },
-        });
+    scrollTrigger: {
+        trigger: ".testimonial-cards-wrapper",
+        start: "top 100%",
+        toggleActions: "play none none none",
+        once: true, // ❗ faqat 1 marta
+    },
+});
 
-        cards.forEach((card, i) => {
-            const fromDir = i % 2 === 0 ? {x: -80, y: 0, rotate: 0} : {x: 80, y: 0, rotate: 0};
+cards.forEach((card, i) => {
+    const fromDir = i % 2 === 0 ? {x: -50} : {x: 50};
 
-            tl.fromTo(
-                card,
-                {
-                    ...fromDir,
-                    opacity: 0,
-                    scale: 0.98,
-                    filter: "blur(4px)",
-                    clipPath: "inset(10% 10% 10% 10%)",
-                },
-                {
-                    x: 0,
-                    y: 0,
-                    rotate: 0,
-                    opacity: 1,
-                    scale: 1,
-                    filter: "blur(0px)",
-                    clipPath: "inset(0% 0% 0% 0%)",
-                    duration: 0.6, // Tezroq
-                    ease: "power2.out", // Eng silliq ease
-                },
-                i * 0.15 // Sekinroq ketma-ket chiqadi
-            );
-        });
+    tl.fromTo(
+        card,
+        {
+            ...fromDir,
+            opacity: 0,
+            scale: 0.95,
+        },
+        {
+            x: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.4, // tezroq
+            ease: "power2.out",
+        },
+        i * 0.1 // 🔥 tez chiqadi
+    );
+});
 
         const observer = new IntersectionObserver(
             (entries) => {

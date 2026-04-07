@@ -14,7 +14,6 @@ const MainLayout = () => {
             </main>
 
             <Marquee />
-            <Footer />
 
             {/* Social buttons */}
             <div

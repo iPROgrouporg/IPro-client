@@ -5,6 +5,6 @@ export const APP_API = {
     vacancy: '/vacancy',
     portfolio: "/portfolio",
     portfolioOtziv: "/portfolio-otviz",
-    support: "/support/send"
+    support: "/support"
 
 }

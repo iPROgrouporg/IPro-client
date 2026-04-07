@@ -16,9 +16,11 @@ import officeimgX from "../../assets/images/officeImgX.png"
 import {useTranslation} from "react-i18next";
 import "../../i18.jsx";
 
+
 import gsap from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import {YearNumber} from "../../components/ui/YearNumber.jsx";
+import Footer from '../../components/layouts/footer.jsx';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -451,6 +453,7 @@ const aboutus = () => {
                 </section>
 
             </main>
+            <Footer/>
         </>
     );
 };

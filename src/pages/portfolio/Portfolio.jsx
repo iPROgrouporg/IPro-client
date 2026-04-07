@@ -1,25 +1,28 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../../components/layouts/header.jsx';
-import Stars from "../../assets/images/stars.png";
-import LefftStars from "../../assets/images/starsleft.png";
-import {useNavigate} from 'react-router-dom';
-import {useTranslation} from "react-i18next";
-import "../../i18.jsx";
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import {img_url, portfolioApi} from "../../connection/BaseUrl.js";
+import { img_url, portfolioApi } from "../../connection/BaseUrl.js";
+import { Loading } from '../../components/loading/Loading.jsx'; // Loading component import qilindi
+import Footer from '../../components/layouts/footer.jsx';
 
 const Portfolio = () => {
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [portfolio, setPortfolio] = useState({});
+    const [loading, setLoading] = useState(true); // loading state qo‘shildi
 
     const getByTypeRandom = async () => {
         try {
-            const res = await portfolioApi.getByTypeRandom()
-            setPortfolio(res.data)
+            const res = await portfolioApi.getByTypeRandom();
+            setPortfolio(res.data);
         } catch (err) {
-            console.log("portfolio " + err)
+            console.log("portfolio " + err);
+            setPortfolio({});
+        } finally {
+            setLoading(false); // loading tugadi
         }
     }
 
@@ -29,20 +32,24 @@ const Portfolio = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        AOS.init({duration: 1500});
-        getByTypeRandom()
+        AOS.init({ duration: 1500 });
+        getByTypeRandom();
     }, []);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-[70vh]">
+                <Loading />
+            </div>
+        );
+    }
 
     return (
         <div>
-            <Header/>
+            <Header />
             <main className='mt-20 relative z-10'>
                 <section>
-                    {/*<div className="absolute right-0 -z-10 animate-pulse">*/}
-                    {/*    <img src={Stars} alt="" className="opacity-40"/>*/}
-                    {/*</div>*/}
-
-                    <div className="container  mx-auto mb-10 px-5 xl:px-14">
+                    <div className="container mx-auto mb-10 px-5 xl:px-14">
                         <h1
                             data-aos="fade-up"
                             className="text-transparent text-white bg-clip-text bg-gradient-to-r md:text-[96px] text-[40px] font-black ml-5 mb-10 text-center md:text-left drop-shadow-[0_5px_20px_rgba(0,112,244,0.8)]"
@@ -98,13 +105,10 @@ const Portfolio = () => {
                                 </div>
                             )
                         ))}
-
-                        {/*<div className="absolute left-0 top-[500px] -z-10 animate-fade-in">*/}
-                        {/*    <img src={LefftStars} alt="" className="opacity-40"/>*/}
-                        {/*</div>*/}
                     </div>
                 </section>
             </main>
+            <Footer/>
         </div>
     );
 };

@@ -1,34 +1,45 @@
-import React, {useEffect, useState} from 'react';
-import {useParams, useNavigate} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
 import Header from '../../components/layouts/header.jsx';
 import Footer from '../../components/layouts/footer.jsx';
-import KranPortfolio from "../../assets/images/kranPortfolio.png";
-import {img_url, portfolioApi} from "../../connection/BaseUrl.js";
+import { img_url, portfolioApi } from "../../connection/BaseUrl.js";
+import { Loading } from '../../components/loading/Loading.jsx'; // Loading component
 
 const ProjectsPage = () => {
-    const {category} = useParams();
-    const [portfolio, setPortfolio] = useState([])
+    const { category } = useParams();
+    const [portfolio, setPortfolio] = useState([]);
+    const [loading, setLoading] = useState(true); // loading state
     const navigate = useNavigate();
 
     const getByTypeAll = async () => {
         try {
-            const res = await portfolioApi.getByType(category)
-            setPortfolio(res.data)
-            console.log(res.data)
+            const res = await portfolioApi.getByType(category);
+            setPortfolio(res.data);
         } catch (err) {
-            console.log("error bu type " + err)
+            console.log("error bu type " + err);
+            setPortfolio([]);
+        } finally {
+            setLoading(false); // loading tugadi
         }
     }
 
-
-
     useEffect(() => {
-        AOS.init({duration: 800, once: true});
-        getByTypeAll()
+        window.scrollTo(0, 0);
+        AOS.init({ duration: 800, once: true });
+        setLoading(true);
+        getByTypeAll();
     }, [category]);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-[70vh]">
+                <Loading />
+            </div>
+        );
+    }
 
     return (
         <>
@@ -57,18 +68,14 @@ const ProjectsPage = () => {
                                     {item.title}
                                 </h3>
                                 <p className="text-gray-400 text-sm leading-snug">
-                                    {
-                                        item.info.length > 42
-                                            ? item.info.slice(0, 42) + "..."
-                                            : item.info
-                                    }
+                                    {item.info.length > 42 ? item.info.slice(0, 42) + "..." : item.info}
                                 </p>
                             </div>
                         </div>
                     ))}
-
                 </div>
             </main>
+            <Footer/>
         </>
     );
 };

@@ -6,75 +6,151 @@ import Achievements from "../../components/ui/achivements.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Scroller = ({ t, Logocloud, Video }) => {
+const Scroller = ({ t, Logocloud }) => {
   const sectionRef = useRef(null);
-  const containerRef = useRef(null);
 
   useEffect(() => {
     const boxes = gsap.utils.toArray(".box");
 
-    gsap.to(boxes, {
-      xPercent: -100 * (boxes.length - 1),
-      ease: "none",
-      scrollTrigger: {
+    const ctx = gsap.context(() => {
+
+      boxes.forEach((box, i) => {
+        if (i === 0) return;
+
+        // 🔥 card chiqishi
+        gsap.fromTo(
+          box,
+          { y: "120%", scale: 1 },
+          {
+            y: "0%",
+            scale: 1,
+            ease: "power4.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: () => `top -${window.innerHeight * i}`,
+              end: () => `+=${window.innerHeight}`,
+              scrub: true,
+            },
+          }
+        );
+
+        // 🔥 oldingi card depth effect
+        gsap.to(boxes[i - 1], {
+          scale: 0.88,
+          opacity: 0.4,
+          filter: "blur(3px)",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: () => `top -${window.innerHeight * (i - 0.5)}`,
+            end: () => `top -${window.innerHeight * i}`,
+            scrub: true,
+          },
+        });
+      });
+
+      // 🔥 PIN
+      ScrollTrigger.create({
         trigger: sectionRef.current,
+        start: "top top",
+        end: () => "+=" + window.innerHeight * boxes.length,
         pin: true,
-        scrub: 1,
-        end: () => "+=" + containerRef.current.offsetWidth,
-      },
-    });
+        scrub: true,
+      });
+
+      // 🔥 PARALLAX BACKGROUND
+      gsap.to(".bg-light", {
+        y: "-20%",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          scrub: true,
+        },
+      });
+
+      // 🔥 IMAGE FLOAT EFFECT
+      gsap.to(".floating-img", {
+        y: -40,
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        ease: "power1.inOut",
+      });
+
+    }, sectionRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
-      <div>
-        <section className="bg-[#16182B] py-10 md:py-20 overflow-hidden">
-          <div className="mb-6" data-aos="fade-up" data-aos-duration="1200">
-            <Logomarqee />
-          </div>
+    <div>
+      <section className="bg-[#0B0F1A] py-16 md:py-24 overflow-hidden">
 
-          {/* Horizontal scroll section */}
-          <section ref={sectionRef} className="relative w-full h-screen overflow-hidden">
-            <div ref={containerRef} className="flex w-[300vw] h-full">
-              {[...Array(3)].map((_, idx) => (
-                  <div
-                      key={idx}
-                      className="box w-screen h-full flex items-center justify-center bg-[#16182B] px-5 md:px-10 lg:px-20"
-                  >
-                    <div className="container mx-auto flex flex-col-reverse md:flex-row items-center justify-between gap-10">
-                      {/* Left Text */}
-                      <div className="w-full md:w-1/2 text-center md:text-left space-y-5">
-                        <h1 className="text-white font-black text-3xl sm:text-5xl md:text-[65px] xl:text-[100px] leading-tight drop-shadow-[0_5px_30px_rgba(0,112,244,0.8)] transition duration-300">
-                          {t("who_are_we")}
-                        </h1>
-                        <p className="text-white font-normal text-sm sm:text-base md:text-base lg:text-xl leading-relaxed tracking-wide text-opacity-90">
-                          {t("description1")}
-                        </p>
-                      </div>
+        <div>
+          <Logomarqee />
+        </div>
 
-                      {/* Right Image - ko‘k fon olingan */}
-                      <div className="w-full md:w-1/2 flex justify-center items-center relative group mt-20 md:mt-0">
+        {/* 🔥 STACK SECTION */}
+        <section
+          ref={sectionRef}
+          className="relative w-full h-screen overflow-hidden"
+        >
+          {/* 🌌 PARALLAX LIGHT */}
+          <div className="bg-light absolute w-[600px] h-[600px] bg-indigo-600/20 blur-[120px] rounded-full top-[-100px] left-[20%]"></div>
 
-                      <img
-                            src={Logocloud}
-                            alt="Logo Cloud"
-                            className="max-w-[300px] sm:max-w-[400px] lg:max-w-[500px] xl:max-w-[600px] w-auto h-auto rounded-2xl shadow-lg transition-transform duration-500 group-hover:scale-105 transform rotate-0"
-                        />
-                      </div>
-                    </div>
-                  </div>
-              ))}
+          {[...Array(3)].map((_, idx) => (
+            <div
+              key={idx}
+              className="box absolute top-0 left-0 w-full h-screen flex items-center justify-center px-6 md:px-12"
+              style={{ zIndex: idx + 1 }}
+            >
+              {/* 🌑 OVERLAY */}
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F1A]/80 via-[#0B0F1A]/60 to-[#0B0F1A]/90 z-10"></div>
+
+              <div className="relative z-20 w-full max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+
+                {/* TEXT */}
+                <div className="space-y-6">
+
+                  <p className="text-blue-400 text-xs uppercase tracking-[0.25em]">
+                    Company
+                  </p>
+
+                  <h1 className="text-white font-bold text-4xl sm:text-5xl md:text-6xl leading-tight drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]">
+                    {t("who_are_we")}
+                  </h1>
+
+                  <p className="text-gray-300 text-base md:text-lg leading-relaxed max-w-xl">
+                    {t("description1")}
+                  </p>
+
+                  <button className="mt-4 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-800 to-indigo-600 hover:opacity-90 transition text-white font-medium shadow-xl">
+                    Learn more
+                  </button>
+                </div>
+
+                {/* IMAGE */}
+                <div className="flex justify-center relative">
+
+                  {/* glow */}
+                  <div className="absolute w-[300px] h-[300px] bg-purple-600/20 blur-[100px] rounded-full"></div>
+
+                  <img
+                    src={Logocloud}
+                    alt="Logo"
+                    className="floating-img relative max-w-[300px] sm:max-w-[380px] md:max-w-[440px] rounded-2xl border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.8)]"
+                  />
+                </div>
+
+              </div>
             </div>
-          </section>
-
-          {/* Video and Text Section */}
-
-
-          {/* Achievements section */}
-          <div data-aos="fade-up">
-            <Achievements />
-          </div>
+          ))}
         </section>
-      </div>
+
+        <div>
+          <Achievements />
+        </div>
+
+      </section>
+    </div>
   );
 };
 

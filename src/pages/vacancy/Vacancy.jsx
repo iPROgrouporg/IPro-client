@@ -1,70 +1,82 @@
-import React, {useState, useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {FaCalendarAlt, FaClock} from "react-icons/fa";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaCalendarAlt, FaClock } from "react-icons/fa";
 import Header from '../../components/layouts/header.jsx';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import "../../i18.jsx";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import {motion} from "framer-motion";
-import {vacancyApi} from "../../connection/BaseUrl.js";
+import { motion } from "framer-motion";
+import { vacancyApi } from "../../connection/BaseUrl.js";
+import { Loading } from '../../components/loading/Loading.jsx'; // Loading component
+import Footer from '../../components/layouts/footer.jsx';
 
 const Vacancy = () => {
     const [visibleJobs, setVisibleJobs] = useState(6);
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const navigate = useNavigate();
-    const [vacancy, setVacancy] = useState([])
+    const [vacancy, setVacancy] = useState([]);
+    const [loading, setLoading] = useState(true); // loading state
 
     const getAll = async () => {
         try {
-            const res = await vacancyApi.getAll()
-            setVacancy(res.data)
-            console.log(res.data)
+            const res = await vacancyApi.getAll();
+            setVacancy(res.data || []);
         } catch (err) {
-            console.log("vacancy error" + err)
+            console.log("vacancy error: " + err);
+            setVacancy([]);
+        } finally {
+            setLoading(false); // loading tugadi
         }
-    }
+    };
 
-    const showMoreJobs = () => setVisibleJobs((prev) => prev + 6);
+    const showMoreJobs = () => setVisibleJobs(prev => prev + 6);
+
     useEffect(() => {
         window.scrollTo(0, 0);
-        AOS.init({duration: 1500});
-        getAll()
+        AOS.init({ duration: 1500 });
+        setLoading(true);
+        getAll();
     }, []);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-[70vh]">
+                <Loading />
+            </div>
+        );
+    }
 
     return (
         <>
             <Header/>
-            <main
-                className="bg-gradient-to-br from-[#0A0F1F] via-[#0E1628] to-[#111B30] text-white min-h-screen pt-28 sm:pt-36">
-
+            <main className="bg-gradient-to-br from-[#0A0F1F] via-[#0E1628] to-[#111B30] text-white min-h-screen pt-28 sm:pt-36">
                 <section className="relative z-10 py-10 px-4 sm:px-8 md:px-10">
                     <div className="container mx-auto px-5 xl:px-0">
                         <motion.h1
-                            initial={{opacity: 0, y: -50}}
-                            animate={{opacity: 1, y: 0}}
-                            transition={{duration: 1}}
+                            initial={{ opacity: 0, y: -50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 1 }}
                             className=" text-white text-center md:text-left text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500 text-[42px] md:text-[80px] font-extrabold leading-[1.1] drop-shadow-[0_5px_30px_rgba(0,112,244,0.9)] mb-16"
                         >
                             {t("vacansy")}
                         </motion.h1>
 
                         <motion.div
-                            initial={{scale: 0.95, opacity: 0}}
-                            animate={{scale: 1, opacity: 1}}
-                            transition={{duration: 1, delay: 0.3}}
-
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ duration: 1, delay: 0.3 }}
                             className="flex flex-col items-center"
                         >
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 w-full">
                                 {vacancy.slice(0, visibleJobs).map((job, index) => (
                                     <motion.div
                                         key={index}
-                                        initial={{opacity: 0, y: 40}}
-                                        whileInView={{opacity: 1, y: 0}}
-                                        whileHover={job.active ? {scale: 1.05} : {}}
-                                        transition={{duration: 0.1, delay: index * 0.15}}
-                                        viewport={{once: true}}
+                                        initial={{ opacity: 0, y: 40 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        whileHover={job.active ? { scale: 1.05 } : {}}
+                                        transition={{ duration: 0.1, delay: index * 0.15 }}
+                                        viewport={{ once: true }}
                                         onClick={() => job.active && navigate(`/vacancy-info/${job.id}`)}
                                         className={`relative overflow-hidden bg-blue-400/10 backdrop-blur-lg border border-blue-500/20 text-white p-6 rounded-2xl shadow-md transition-all duration-300 group ${
                                             job.active
@@ -73,12 +85,11 @@ const Vacancy = () => {
                                         }`}
                                     >
                                         {!job.active && (
-                                            <div
-                                                className="absolute inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center rounded-2xl z-20">
+                                            <div className="absolute inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center rounded-2xl z-20">
                                                 <motion.div
-                                                    initial={{scale: 0, opacity: 0}}
-                                                    animate={{scale: 1, opacity: 1}}
-                                                    transition={{duration: 0.4}}
+                                                    initial={{ scale: 0, opacity: 0 }}
+                                                    animate={{ scale: 1, opacity: 1 }}
+                                                    transition={{ duration: 0.4 }}
                                                     className="flex flex-col items-center gap-3"
                                                 >
                                                     <svg
@@ -130,7 +141,6 @@ const Vacancy = () => {
                                             </motion.button>
                                         </div>
                                     </motion.div>
-
                                 ))}
                             </div>
 
@@ -149,6 +159,7 @@ const Vacancy = () => {
                     </div>
                 </section>
             </main>
+            <Footer/>
         </>
     );
 };

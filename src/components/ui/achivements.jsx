@@ -42,7 +42,7 @@ const Achievements = () => {
     }, []);
 
     return (
-        <div ref={ref} className="py-5 flex justify-center my-10">
+        <div ref={ref} className="py-5 flex justify-center">
             <div className="flex flex-col sm:flex-row items-center justify-center text-white gap-8 sm:gap-[50px]">
                 {achievementsList.map((achievement, index) => (
                     <div key={index} className="flex items-center">

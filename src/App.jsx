@@ -18,6 +18,7 @@ import RecoveryPassword from "./pages/auth/RecoveryPassword";
 import Vacancy from "./pages/vacancy/Vacancy.jsx";
 import {VacancyItem} from "./pages/vacancy/VacacncyItem.jsx";
 import ServicesItem from "./pages/services/ServicesItem.jsx";
+import { Test } from "./components/Test.jsx";
 
 function AppRouter() {
     return (
@@ -26,6 +27,7 @@ function AppRouter() {
                 <Route path="/register" element={<Register/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/recoveryPassword" element={<RecoveryPassword/>}/>
+                <Route path="/test" element={<Test/>}/>
 
                 <Route path="/" element={<MainLayout/>}>
                     <Route index element={<Home/>}/>
