@@ -25,13 +25,24 @@ const Faq = ({ t, StarsRightImg, IproIMage }) => {
 
     // Validation
     const validate = () => {
-        const newErrors = {};
-        if (!fullName.trim()) newErrors.fullName = t("required_name");
-        if (!phoneNumber || phoneNumber.length < 13) newErrors.phoneNumber = t("required_phone");
-        if (!description.trim()) newErrors.description = t("required_description");
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+  const newErrors = {};
+
+  if (!fullName.trim()) {
+    newErrors.fullName = t("required_name");
+  }
+
+  // +998 + 9 ta raqam = 13 uzunlik
+  if (!phoneNumber || !/^\+998\d{9}$/.test(phoneNumber)) {
+    newErrors.phoneNumber = t("required_phone");
+  }
+
+  if (!description.trim()) {
+    newErrors.description = t("required_description");
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
     // Send data
     const send = async (e) => {
@@ -132,9 +143,18 @@ const Faq = ({ t, StarsRightImg, IproIMage }) => {
                                         <input
                                             type="text"
                                             value={fullName}
-                                            onChange={(e) => setFullName(e.target.value)}
+                                            onChange={(e) => {
+                                                let value = e.target.value;
+
+                                                // faqat harf va probel
+                                                value = value.replace(/[^a-zA-Zа-яА-Я\s]/g, "");
+
+                                                setFullName(value);
+                                            }}
                                             placeholder={t("your_name")}
-                                            className={`px-4 sm:px-5 py-3 rounded-xl bg-[#1e293b] text-white placeholder-gray-400 shadow-inner border ${errors.fullName ? "border-red-500" : "border-white/10"} focus:outline-none`}
+                                            className={`px-4 sm:px-5 py-3 rounded-xl bg-[#1e293b] text-white placeholder-gray-400 shadow-inner border ${
+                                                errors.fullName ? "border-red-500" : "border-white/10"
+                                            } focus:outline-none`}
                                         />
                                         {errors.fullName && <span className="text-red-500 text-sm">{errors.fullName}</span>}
                                     </div>
@@ -143,13 +163,23 @@ const Faq = ({ t, StarsRightImg, IproIMage }) => {
                                         <input
                                             type="tel"
                                             value={phoneNumber}
-                                            onChange={(e) => {
-                                                let value = e.target.value.replace(/\D/g, '');
-                                                if (!value.startsWith('998')) value = '998' + value;
-                                                setPhoneNumber('+' + value);
+                                          onChange={(e) => {
+                                                let value = e.target.value.replace(/\D/g, ""); // faqat raqam
+
+                                                // doim 998 bilan boshlansin
+                                                if (!value.startsWith("998")) {
+                                                  value = "998" + value;
+                                                }
+
+                                                // faqat 12 ta raqam (998 + 9 ta)
+                                                value = value.slice(0, 12);
+
+                                                setPhoneNumber("+" + value);
                                             }}
                                             placeholder={t("phone_number")}
-                                            className={`px-4 sm:px-5 py-3 rounded-xl bg-[#1e293b] text-white placeholder-gray-400 shadow-inner border ${errors.phoneNumber ? "border-red-500" : "border-white/10"} focus:outline-none`}
+                                            className={`px-4 sm:px-5 py-3 rounded-xl bg-[#1e293b] text-white placeholder-gray-400 shadow-inner border ${
+                                                errors.phoneNumber ? "border-red-500" : "border-white/10"
+                                            } focus:outline-none`}
                                         />
                                         {errors.phoneNumber && <span className="text-red-500 text-sm">{errors.phoneNumber}</span>}
                                     </div>

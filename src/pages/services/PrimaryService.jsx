@@ -94,6 +94,11 @@ const PrimaryService = ({StarsLeftImg, t}) => {
                             </motion.div>
                         ))}
                     </div>
+                   <div className="flex justify-center">
+                        <button className="text-white text-sm font-bold px-6 py-3 rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-300 hover:scale-105 shadow-lg">
+                            {t("learnMore")}
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>

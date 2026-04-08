@@ -3,6 +3,8 @@ import Header from '../../components/layouts/header.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import AOS from 'aos';
+import { motion } from "framer-motion";
+
 import 'aos/dist/aos.css';
 import { img_url, portfolioApi } from "../../connection/BaseUrl.js";
 import { Loading } from '../../components/loading/Loading.jsx'; // Loading component import qilindi
@@ -50,12 +52,15 @@ const Portfolio = () => {
             <main className='mt-20 relative z-10'>
                 <section>
                     <div className="container mx-auto mb-10 px-5 xl:px-14">
-                        <h1
-                            data-aos="fade-up"
-                            className="text-transparent text-white bg-clip-text bg-gradient-to-r md:text-[96px] text-[40px] font-black ml-5 mb-10 text-center md:text-left drop-shadow-[0_5px_20px_rgba(0,112,244,0.8)]"
-                        >
-                            {t("projects")}
-                        </h1>
+                       <motion.h1
+  data-aos="fade-up"
+  initial={{ opacity: 0, y: -50 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 1 }}
+  className="text-white text-center md:text-left text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500 text-[42px] md:text-[80px] font-extrabold leading-[1.1] drop-shadow-[0_5px_30px_rgba(0,112,244,0.9)] mb-16"
+>
+  {t("projects").toUpperCase()}
+</motion.h1>
 
                         {Object.entries(portfolio).map(([type, items], index) => (
                             items.length > 0 && (

@@ -9,6 +9,8 @@ import { img_url, servicesApi } from "../../connection/BaseUrl.js";
 import { motion } from "framer-motion";
 import { Loading } from '../../components/loading/Loading.jsx'; // Loading component
 import Footer from '../../components/layouts/footer.jsx';
+import { motion } from "framer-motion";
+
 
 const Services = () => {
     const { t } = useTranslation();
@@ -47,13 +49,15 @@ const Services = () => {
         <>
             <Header/>
             <main className="mt-20 px-5 xl:px-14 container mx-auto">
-                <h1
-                    data-aos="fade-up"
-                    className="text-center md:text-left text-[42px] md:text-[96px] font-extrabold tracking-tight mb-16
-                        text-transparent bg-clip-text text-white drop-shadow-[0_10px_20px_rgba(0,115,255,0.5)]"
+                <motion.h1
+                  data-aos="fade-up"
+                  initial={{ opacity: 0, y: -50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1 }}
+                  className="text-white text-center md:text-left text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500 text-[42px] md:text-[80px] font-extrabold leading-[1.1] drop-shadow-[0_5px_30px_rgba(0,112,244,0.9)] mb-16"
                 >
-                    {t("services")}
-                </h1>
+                  {t("services").toUpperCase()}
+                </motion.h1>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-16">
                     {services.map((service, index) => (
