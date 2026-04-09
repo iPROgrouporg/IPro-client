@@ -12,7 +12,7 @@ import ProjectInfo from "./pages/portfolio/ProjectInfo.jsx";
 import AuthGuard from "./connection/AuthGuard";
 import MainLayout from "./layouts/mainLayout/mainlayout";
 
-import Register from "./pages/auth/register";
+import Register from "./pages/auth/Register";
 import Login from "./pages/auth/login";
 import RecoveryPassword from "./pages/auth/RecoveryPassword";
 import Vacancy from "./pages/vacancy/Vacancy.jsx";
