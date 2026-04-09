@@ -1,13 +1,29 @@
 import React from "react";
 
-const steps = [
+// Register va Reset Password uchun steplarni export qilamiz
+export const registerSteps = [
   { title: "Ro'yxatdan o'tish", description: "Iltimos ma'lumotlarni to'ldiring" },
   { title: "Telefon raqamni tasdiqlash", description: "SMS kod yuborildi" },
   { title: "Yakuniy qism", description: "Muvaffaqiyatli ro'yxatdan o'tildi!" },
 ];
 
+export const resetPasswordSteps = [
+  { 
+    title: "Parolni tiklash", 
+    description: "Hisobingizga ulangan telefon raqamni kiriting" 
+  },
+  { 
+    title: "SMS tasdiqlash", 
+    description: "Telefoningizga yuborilgan kodni kiriting" 
+  },
+  { 
+    title: "Yangi parol o‘rnatish", 
+    description: "Xavfsiz yangi parol yarating" 
+  },
+];
+
 // O'ng panel uchun stepper (dumaloq bosqichlar)
-export const StepperCircles = ({ currentStep = 1 }) => {
+export const StepperCircles = ({ currentStep = 1, steps = registerSteps }) => {
   return (
     <div className="flex flex-col items-start space-y-6 w-full">
       {steps.map((step, index) => {
@@ -35,9 +51,7 @@ export const StepperCircles = ({ currentStep = 1 }) => {
             </div>
             {index < steps.length - 1 && (
               <div
-                className={`h-6 sm:h-8 border-l-2 ml-3 ${
-                  currentStep > stepNumber ? "border-blue-400" : "border-gray-400"
-                }`}
+                className={`h-6 sm:h-8 border-l-2 ml-3 ${currentStep > stepNumber ? "border-blue-400" : "border-gray-400"}`}
               />
             )}
           </div>
@@ -48,7 +62,7 @@ export const StepperCircles = ({ currentStep = 1 }) => {
 };
 
 // Chap panel uchun progress bar
-export const ProgressBar = ({ currentStep = 1 }) => {
+export const ProgressBar = ({ currentStep = 1, steps = registerSteps }) => {
   return (
     <div className="flex items-center justify-between mt-4 sm:mt-6 w-full">
       {steps.map((_, index) => {

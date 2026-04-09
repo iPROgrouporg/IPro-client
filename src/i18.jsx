@@ -40,6 +40,8 @@ i18n
     footerText: "©2020 - 2025 Barcha huquqlar himoyalangan. Qpay",
     rightSideMessage: "Sizni saytimizda ko‘rganimizdan hursandmiz!\nBizga ishonganingiz uchun rahmat.",
 
+    rButton: "Davom etish",
+
     headerLogoAlt: "Logo",
   loginText: "Ro'yxatdan o'tganmisiz?",
   loginButton: "Kirish",
@@ -56,6 +58,8 @@ i18n
   continueButton: "Davom etish",
   confirmButton: "Tasdiqlash",
   successMessage: "Siz muvaffaqiyatli ro'yxatdan o'tdingiz!",
+  rtButton: "Tasdiqlash",
+  rBack:"Ortga",
 
                     yandex_map: "Yandex Xarita",
                     google_map: "Google Xarita",
@@ -327,6 +331,9 @@ i18n
   continueButton: "Continue",
   confirmButton: "Confirm",
   successMessage: "You have successfully registered!",
+  rButton:"Continue",
+  rtButton:"Confirmation",
+  rBack:"Back",
                     
                     yandex_map: "Yandex map",
                     google_map: "Google map",
@@ -597,6 +604,9 @@ i18n
   continueButton: "Продолжить",
   confirmButton: "Подтвердить",
   successMessage: "Вы успешно зарегистрировались!",
+  rButton: "Продолжить",
+  rtButton: "Подтверждение",
+  rBack: "Назад",
 
                     yandex_map: "Яндекс карта",
                     google_map: "Карта Google",

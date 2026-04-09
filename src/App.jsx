@@ -12,6 +12,7 @@ import Services from "./pages/services/Services.jsx";
 import Team from "./pages/team/team.jsx";
 import UserProfile from "./pages/userpanel/user";
 
+<<<<<<< Updated upstream
 import { Test } from "./components/Test.jsx";
 import Login from "./pages/auth/Login";
 import RecoveryPassword from "./pages/auth/RecoveryPassword";
@@ -19,6 +20,15 @@ import Register from "./pages/auth/Register";
 import ServicesItem from "./pages/services/ServicesItem.jsx";
 import { VacancyItem } from "./pages/vacancy/VacacncyItem.jsx";
 import Vacancy from "./pages/vacancy/Vacancy.jsx";
+=======
+import Login from "./pages/auth/Login.jsx";
+import RecoveryPassword from "./pages/auth/RecoveryPassword.jsx";
+import Vacancy from "./pages/vacancy/Vacancy.jsx";
+import {VacancyItem} from "./pages/vacancy/VacacncyItem.jsx";
+import ServicesItem from "./pages/services/ServicesItem.jsx";
+import { Test } from "./components/Test.jsx";
+import Register from "./pages/auth/Register.jsx";
+>>>>>>> Stashed changes
 
 function AppRouter() {
     return (
