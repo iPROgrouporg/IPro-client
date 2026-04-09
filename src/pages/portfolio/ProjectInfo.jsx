@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Loading } from '../../components/loading/Loading.jsx';
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
-import { portfolioOtzivApi } from "../../connection/BaseUrl.js";
 import { motion } from "framer-motion";
-import Header from '../../components/layouts/header.jsx';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from "react-router-dom";
 import Footer from '../../components/layouts/footer.jsx';
+import Header from '../../components/layouts/header.jsx';
+import { Loading } from '../../components/loading/Loading.jsx';
+import { portfolioOtzivApi } from "../../connection/BaseUrl.js";
 
 const ProjectInfo = () => {
     const navigate = useNavigate();

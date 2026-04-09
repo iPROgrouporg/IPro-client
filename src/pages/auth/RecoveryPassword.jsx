@@ -1,7 +1,7 @@
-import React, { useState, useRef } from "react";
-import Logo from "../../assets/icons/Logo.svg";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { StepperCircles, ProgressBar } from "./RegisterStepper";
+import Logo from "../../assets/icons/Logo.svg";
+import { ProgressBar, StepperCircles } from "./RegisterStepper";
 
 const RecoveryPassword = () => {
   const navigate = useNavigate();
@@ -132,10 +132,10 @@ const RecoveryPassword = () => {
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white">
-      
+
       {/* LEFT */}
       <div className="flex-1 lg:flex-[7.5] flex flex-col">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between px-4 sm:px-6 lg:px-10 py-4">
           <img

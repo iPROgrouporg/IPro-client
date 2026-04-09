@@ -1,15 +1,14 @@
+import { Headset, Instagram, Send, X } from "lucide-react";
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Marquee from "../../components/ui/marque";
-import Footer from "../../components/layouts/footer";
-import { Headset, X, Send, Instagram } from "lucide-react";
-import { useState } from "react";
 
 const MainLayout = () => {
     const [open, setOpen] = useState(false);
 
     return (
         <div className="relative min-h-screen flex flex-col">
-            <main className="flex-grow">
+            <main className="flex-grow">    
                 <Outlet />
             </main>
 

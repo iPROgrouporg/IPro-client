@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import Header from '../../components/layouts/header.jsx';
-import { useNavigate } from 'react-router-dom';
-import { useTranslation } from "react-i18next";
 import AOS from 'aos';
 import { motion } from "framer-motion";
+import { useEffect, useState } from 'react';
+import { useTranslation } from "react-i18next";
+import { useNavigate } from 'react-router-dom';
+import Header from '../../components/layouts/header.jsx';
 
 import 'aos/dist/aos.css';
-import { img_url, portfolioApi } from "../../connection/BaseUrl.js";
-import { Loading } from '../../components/loading/Loading.jsx'; // Loading component import qilindi
 import Footer from '../../components/layouts/footer.jsx';
+import { Loading } from '../../components/loading/Loading.jsx'; // Loading component import qilindi
+import { img_url, portfolioApi } from "../../connection/BaseUrl.js";
 
 const Portfolio = () => {
     const { t } = useTranslation();

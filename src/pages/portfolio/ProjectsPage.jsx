@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import Header from '../../components/layouts/header.jsx';
 import Footer from '../../components/layouts/footer.jsx';
-import { img_url, portfolioApi } from "../../connection/BaseUrl.js";
+import Header from '../../components/layouts/header.jsx';
 import { Loading } from '../../components/loading/Loading.jsx'; // Loading component
+import { img_url, portfolioApi } from "../../connection/BaseUrl.js";
 
 const ProjectsPage = () => {
     const { category } = useParams();
@@ -43,7 +43,7 @@ const ProjectsPage = () => {
 
     return (
         <>
-            <Header/>
+            <Header />
             <main className="mt-24 px-5 xl:px-16 container mx-auto mb-16">
                 <h1 className="text-4xl md:text-6xl font-extrabold text-center mb-12 uppercase tracking-widest bg-gradient-to-r from-blue-400 via-sky-300 to-blue-100 bg-clip-text text-transparent">
                     {category}
@@ -75,7 +75,7 @@ const ProjectsPage = () => {
                     ))}
                 </div>
             </main>
-            <Footer/>
+            <Footer />
         </>
     );
 };

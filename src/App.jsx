@@ -1,24 +1,24 @@
-import {BrowserRouter, Routes, Route} from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import Home from "./pages/home/home.jsx";
-import AboutUs from "./pages/about/aboutus.jsx";
-import Team from "./pages/team/team.jsx";
-import Portfolio from "./pages/portfolio/Portfolio.jsx";
-import Services from "./pages/services/Services.jsx";
-import UserProfile from "./pages/userpanel/user";
-import ProjectPage from "./pages/portfolio/ProjectsPage.jsx";
 import NotFound from "./components/notfount/notfound.jsx";
-import ProjectInfo from "./pages/portfolio/ProjectInfo.jsx";
 import AuthGuard from "./connection/AuthGuard";
 import MainLayout from "./layouts/mainLayout/mainlayout";
+import AboutUs from "./pages/about/aboutus.jsx";
+import Home from "./pages/home/home.jsx";
+import Portfolio from "./pages/portfolio/Portfolio.jsx";
+import ProjectInfo from "./pages/portfolio/ProjectInfo.jsx";
+import ProjectPage from "./pages/portfolio/ProjectsPage.jsx";
+import Services from "./pages/services/Services.jsx";
+import Team from "./pages/team/team.jsx";
+import UserProfile from "./pages/userpanel/user";
 
-import Register from "./pages/auth/Register";
-import Login from "./pages/auth/login";
-import RecoveryPassword from "./pages/auth/RecoveryPassword";
-import Vacancy from "./pages/vacancy/Vacancy.jsx";
-import {VacancyItem} from "./pages/vacancy/VacacncyItem.jsx";
-import ServicesItem from "./pages/services/ServicesItem.jsx";
 import { Test } from "./components/Test.jsx";
+import Login from "./pages/auth/Login";
+import RecoveryPassword from "./pages/auth/RecoveryPassword";
+import Register from "./pages/auth/Register";
+import ServicesItem from "./pages/services/ServicesItem.jsx";
+import { VacancyItem } from "./pages/vacancy/VacacncyItem.jsx";
+import Vacancy from "./pages/vacancy/Vacancy.jsx";
 
 function AppRouter() {
     return (

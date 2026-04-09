@@ -1,9 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
-import Header from "../../components/layouts/header.jsx";
-import {vacancyApi} from "../../connection/BaseUrl.js";
 import AOS from "aos";
-import Footer from "../../components/layouts/footer.jsx";
+import { useEffect, useState } from "react";
 import {
     FaCalendarAlt,
     FaClock,
@@ -13,8 +9,12 @@ import {
     FaWhatsapp,
     FaYoutube
 } from "react-icons/fa";
-import {VacancyForms} from "../../components/forms/vacancyForms/VacancyForms.jsx";
+import { useNavigate, useParams } from "react-router-dom";
+import { VacancyForms } from "../../components/forms/vacancyForms/VacancyForms.jsx";
+import Footer from "../../components/layouts/footer.jsx";
+import Header from "../../components/layouts/header.jsx";
 import { Loading } from "../../components/loading/Loading.jsx";
+import { vacancyApi } from "../../connection/BaseUrl.js";
 
 export const VacancyItem = () => {
     const navigate = useNavigate();

@@ -1,26 +1,26 @@
-import React, {useEffect, useRef} from 'react';
-import Header from '../../components/layouts/header.jsx';
-import Achievements from '../../components/ui/achivements.jsx';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import aboutus1 from "../../assets/images/2021.png"
-import aboutus2 from "../../assets/images/2022.png"
-import aboutus3 from "../../assets/images/2023.png"
-import aboutus4 from "../../assets/images/2024.png"
-import aboutus5 from "../../assets/images/2025.png"
+import { useEffect, useRef } from 'react';
+import aboutus1 from "../../assets/images/2021.png";
+import aboutus2 from "../../assets/images/2022.png";
+import aboutus3 from "../../assets/images/2023.png";
+import aboutus4 from "../../assets/images/2024.png";
+import aboutus5 from "../../assets/images/2025.png";
+import Header from '../../components/layouts/header.jsx';
+import Achievements from '../../components/ui/achivements.jsx';
 
-import OfficeIMG from "../../assets/images/officeimg.png"
-import OfficeIMgBig from "../../assets/images/officeimgBig.png"
-import officeimgY from "../../assets/images/officeimgY.png"
-import officeimgX from "../../assets/images/officeImgX.png"
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import OfficeIMG from "../../assets/images/officeimg.png";
+import OfficeIMgBig from "../../assets/images/officeimgBig.png";
+import officeimgX from "../../assets/images/officeImgX.png";
+import officeimgY from "../../assets/images/officeimgY.png";
 import "../../i18.jsx";
 
 
 import gsap from 'gsap';
-import {ScrollTrigger} from 'gsap/ScrollTrigger';
-import {YearNumber} from "../../components/ui/YearNumber.jsx";
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Footer from '../../components/layouts/footer.jsx';
+import { YearNumber } from "../../components/ui/YearNumber.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 

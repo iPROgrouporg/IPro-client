@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../assets/icons/Logo.svg";
 import LogoBig from "../../assets/images/iproLogoRegister.png";
 import { authApi } from "../../connection/BaseUrl.js";
-import { useTranslation } from "react-i18next";
 
 const Login = () => {
     const navigate = useNavigate();

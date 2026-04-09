@@ -1,8 +1,8 @@
+import { animate, cubicBezier, scroll } from "motion";
 import { useEffect, useRef } from "react";
 import "./style.css";
-import { animate, scroll, cubicBezier } from "motion";
 
-export const Test=()=> {
+export const Test = () => {
   const imageRef = useRef(null);
   const firstSectionRef = useRef(null);
   const layersRef = useRef([]);

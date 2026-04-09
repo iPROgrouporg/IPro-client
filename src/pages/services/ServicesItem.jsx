@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
-import Header from '../../components/layouts/header.jsx';
-import Footer from '../../components/layouts/footer.jsx';
-import BgImgService from "../../assets/images/bgimgservice.png"
-import {FaDownload} from 'react-icons/fa';
-import {img_url, servicesApi} from "../../connection/BaseUrl.js";
+import { useEffect, useState } from 'react';
+import { FaDownload } from 'react-icons/fa';
+import { useNavigate, useParams } from 'react-router-dom';
+import BgImgService from "../../assets/images/bgimgservice.png";
 import { OrderForms } from '../../components/forms/orderForms/OrderForms.jsx';
+import Footer from '../../components/layouts/footer.jsx';
+import Header from '../../components/layouts/header.jsx';
 import { Loading } from '../../components/loading/Loading.jsx';
+import { img_url, servicesApi } from "../../connection/BaseUrl.js";
 
 const ServicesItem = () => {
     const {id} = useParams()
