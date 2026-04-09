@@ -9,8 +9,6 @@ import { img_url, servicesApi } from "../../connection/BaseUrl.js";
 import { motion } from "framer-motion";
 import { Loading } from '../../components/loading/Loading.jsx'; // Loading component
 import Footer from '../../components/layouts/footer.jsx';
-import { motion } from "framer-motion";
-
 
 const Services = () => {
     const { t } = useTranslation();
