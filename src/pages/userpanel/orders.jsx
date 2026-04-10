@@ -9,6 +9,7 @@ const orderList = [
   { id: 5, title: "SEO Optimization", description: "Web-saytlarni Google va boshqa qidiruv tizimlarida optimallashtirish" }
 ];
 
+
 const Orders = () => {
   const [isOpen, setIsOpen] = useState(false);
 
