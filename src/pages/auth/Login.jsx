@@ -8,44 +8,50 @@ import { authApi } from "../../connection/BaseUrl.js";
 const Login = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
-    
 
-    const [phoneNumber, setPhoneNumber] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("+998");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
-    // 🔥 PHONE INPUT (global format)
+    // 📱 PHONE INPUT (+998 LOCK)
     const handlePhoneChange = (e) => {
         let value = e.target.value;
 
         value = value.replace(/[^+\d]/g, "");
 
-        if (value.includes("+")) {
-            value = "+" + value.replace(/\+/g, "");
+        if (!value.startsWith("+998")) {
+            value = "+998" + value.replace(/\+/g, "");
         }
 
-        if (value.length > 16) {
-            value = value.slice(0, 16);
+        if (value.length > 13) {
+            value = value.slice(0, 13);
         }
 
         setPhoneNumber(value);
 
         if (errors.phoneNumber) {
-            setErrors({ ...errors, phoneNumber: "" });
+            setErrors((prev) => ({ ...prev, phoneNumber: "" }));
         }
     };
 
-    // 🔥 LOGIN
+    // 📱 AUTO FILL +998 ON FOCUS
+    const handlePhoneFocus = () => {
+        if (!phoneNumber) {
+            setPhoneNumber("+998");
+        }
+    };
+
+    // 🔐 LOGIN
     const handleLogin = async () => {
         const newErrors = {};
 
-        if (!phoneNumber.trim()) {
-            newErrors.phoneNumber = `${t('phoneError')}`
+        if (!phoneNumber || phoneNumber.length < 13) {
+            newErrors.phoneNumber = t("phoneError");
         }
 
         if (!password.trim()) {
-            newErrors.password = `${t('passwordError')}`;
+            newErrors.password = t("passwordError");
         }
 
         if (Object.keys(newErrors).length > 0) {
@@ -56,30 +62,36 @@ const Login = () => {
         try {
             setLoading(true);
 
-            // 🔥 NORMALIZE
-            let login = phoneNumber.replace(/[^\d]/g, "");
-            login = "+" + login;
+            // 👉 API FORMAT: 998XXXXXXXXX
+            const formattedPhone = phoneNumber.replace(/\D/g, "");
 
-            const res = await authApi.login({
-                login,
-                password,
-            });
+            const payload = {
+                phoneNumber: formattedPhone,
+                password: password,
+            };
 
-            const result = res.data;
+            const res = await authApi.login(payload);
+            const data = res.data;
 
-            if (result.accessToken) {
-                sessionStorage.setItem("token", result.accessToken);
-                sessionStorage.setItem("user", JSON.stringify(result.users));
-                window.location.href = "/dashboard";
-            } else {
+            const token = data?.accessToken;
+
+            if (!token) {
                 alert("Login muvaffaqiyatsiz!");
+                return;
             }
+
+            localStorage.setItem("token", token);
+            
+            setTimeout(() => {
+                navigate("/");
+            }, 500);
         } catch (error) {
             if (error.response?.status === 401) {
                 alert("Telefon yoki parol noto‘g‘ri!");
             } else {
-                alert("Serverda xatolik!");
+                alert("Server xatolik!");
             }
+
             console.log("Login error:", error);
         } finally {
             setLoading(false);
@@ -88,9 +100,10 @@ const Login = () => {
 
     return (
         <div className="flex min-h-screen bg-white flex-col lg:flex-row">
+
             {/* LEFT */}
             <div className="w-full lg:flex-[7.5] flex flex-col">
-                
+
                 {/* HEADER */}
                 <div className="flex items-center justify-between px-5 md:px-10 py-5 md:py-7">
                     <img
@@ -101,12 +114,12 @@ const Login = () => {
                     />
 
                     <div className="flex items-center gap-3 md:gap-4">
-                        <p className="text-sm hidden sm:block">{t('registerText')}</p>
+                        <p className="text-sm hidden sm:block">{t("registerText")}</p>
                         <Link
                             to="/register"
                             className="rounded-md border-2 border-black px-4 md:px-6 py-1 text-xs md:text-sm font-medium text-black transition hover:shadow-lg"
                         >
-                            {t('registerButton')}
+                            {t("registerButton")}
                         </Link>
                     </div>
                 </div>
@@ -114,7 +127,7 @@ const Login = () => {
                 {/* FORM */}
                 <div className="flex flex-1 justify-center items-center px-4 py-10 md:py-24">
                     <div className="w-full max-w-md">
-                        
+
                         {/* TITLE */}
                         <div className="mb-8 md:mb-10 text-center">
                             <h1 className="mb-3 text-2xl md:text-3xl font-bold">
@@ -131,6 +144,7 @@ const Login = () => {
                                 type="text"
                                 value={phoneNumber}
                                 onChange={handlePhoneChange}
+                                onFocus={handlePhoneFocus}
                                 placeholder="+998901234567"
                                 className={`w-full rounded-md border-2 px-4 py-3 text-sm md:text-base focus:outline-none ${
                                     errors.phoneNumber
@@ -151,7 +165,7 @@ const Login = () => {
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                placeholder={t('passwordPlaceholder')}
+                                placeholder={t("passwordPlaceholder")}
                                 className={`w-full rounded-md border-2 px-4 py-3 text-sm md:text-base focus:outline-none ${
                                     errors.password
                                         ? "border-red-500"
@@ -173,7 +187,7 @@ const Login = () => {
                                     className="h-4 w-4 accent-blue-500"
                                 />
                                 <span className="text-gray-600 text-xs md:text-sm">
-                                    {t('rememberMe')}
+                                    {t("rememberMe")}
                                 </span>
                             </label>
 
@@ -181,7 +195,7 @@ const Login = () => {
                                 to="/recoveryPassword"
                                 className="text-gray-600 text-xs md:text-sm transition hover:text-blue-600"
                             >
-                                {t('forgotPassword')}
+                                {t("forgotPassword")}
                             </Link>
                         </div>
 
@@ -192,7 +206,7 @@ const Login = () => {
                                 disabled={loading}
                                 className="w-full rounded-md bg-blue-600 py-3 text-sm md:text-base font-medium text-white transition hover:bg-blue-700 active:scale-95 disabled:opacity-50"
                             >
-                                {loading ? t('loadingText') : t('loginButton')}
+                                {loading ? t("loadingText") : t("loginButton")}
                             </button>
                         </div>
                     </div>
@@ -201,30 +215,30 @@ const Login = () => {
                 {/* FOOTER */}
                 <div className="mb-6 md:mb-10 mt-4 flex items-center justify-center">
                     <h5 className="text-center text-xs md:text-sm font-light text-gray-400">
-                        {t('footerText')}
+                        {t("footerText")}
                     </h5>
                 </div>
             </div>
 
-            {/* RIGHT (ONLY DESKTOP) */}
+            {/* RIGHT */}
             <div
                 className="hidden lg:flex lg:flex-[2.5] h-screen flex-col items-center justify-center"
                 style={{
                     background: `
-                    linear-gradient(225deg,
-                      #2D2F76 0%, #2E307C 30%,
-                      #1d4ed8 30%, #1d4ed8 40%,
-                      #1e40af 40%, #1e40af 70%,
-                      #312e81 55%, #312e81 80%
-                    )
-                  `,
+                        linear-gradient(225deg,
+                        #2D2F76 0%, #2E307C 30%,
+                        #1d4ed8 30%, #1d4ed8 40%,
+                        #1e40af 40%, #1e40af 70%,
+                        #312e81 55%, #312e81 80%
+                        )
+                    `,
                 }}
             >
                 <img src={LogoBig} alt="Logo" className="w-60" />
 
                 <div className="mt-16 px-6">
                     <p className="text-center text-sm font-semibold text-white">
-                        {t('rightSideMessage')}
+                        {t("rightSideMessage")}
                     </p>
                 </div>
             </div>

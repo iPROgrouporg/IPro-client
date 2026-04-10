@@ -36,7 +36,7 @@ export const portfolioOtzivApi = {
     getOne: (id) => base_url.get(`${APP_API.portfolioOtziv}/${id}/otziv-get`)
 }
 export const authApi = {
-     register: (data) => base_url.post(APP_API.register, data),
+    register: (data) => base_url.post(APP_API.register, data),
     verifyOtp: (data) => base_url.post(APP_API.verifyOtp, data),
     login: (data) => base_url.post(APP_API.login, data),
 }

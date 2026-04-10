@@ -1,6 +1,7 @@
 export const APP_API = {
-    login: "/auth/login",
     register: "/auth/register",
+  verifyOtp: "/auth/verify-otp",
+  login: "/auth/login",
     service: "/service",
     vacancy: '/vacancy',
     portfolio: "/portfolio",

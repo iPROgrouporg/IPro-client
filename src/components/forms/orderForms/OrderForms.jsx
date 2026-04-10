@@ -1,124 +1,171 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
+import { base_url } from "../../../connection/BaseUrl";
 
 export const OrderForms = ({ setShowModal, service }) => {
+  const token = localStorage.getItem("token");
+
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const [companyName, setCompanyName] = useState("");
   const [orderAmount, setOrderAmount] = useState("");
   const [deadline, setDeadline] = useState("");
   const [description, setDescription] = useState("");
   const [useCashback, setUseCashback] = useState(false);
-  const [errors, setErrors] = useState({});
+
+  const [errors, setErrors] = useState("");
+
+  // ================= GET USER =================
+  useEffect(() => {
+    if (!token) return;
+
+    base_url
+      .get("/auth/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => setUser(res.data))
+      .catch(() => setUser(null));
+  }, [token]);
 
   const handleAmount = (e) => {
     const onlyNums = e.target.value.replace(/\D/g, "");
     setOrderAmount(onlyNums);
   };
 
-  const handleSubmit = (e) => {
+  // ================= CHECK AUTH =================
+  const canOrder = () => {
+    if (!token) return "Ro‘yxatdan o‘ting";
+    if (!user?.enabled) return "Ro‘yxatdan o‘ting";
+    if (!user?.verified) return "Telefon tasdiqlanmagan";
+    return null;
+  };
+
+  // ================= SUBMIT =================
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = {};
-    if (!companyName) newErrors.companyName = "Kompaniya nomi kiritilishi kerak";
-    if (!orderAmount) newErrors.orderAmount = "Buyurtma narxi kiritilishi kerak";
-    if (!deadline) newErrors.deadline = "Deadline kiritilishi kerak";
 
-    setErrors(newErrors);
+    const authError = canOrder();
+    if (authError) {
+      setErrors(authError);
+      return;
+    }
 
-    if (Object.keys(newErrors).length === 0) {
-      const data = { companyName, orderAmount, deadline, description, useCashback };
-      console.log("ORDER DATA:", data);
+    if (!companyName || !orderAmount || !deadline) {
+      setErrors("Barcha maydonlarni to‘ldiring");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const payload = {
+        companyName,
+        orderAmount: Number(orderAmount),
+        deadline,
+        description,
+        useCashback,
+      };
+
+      const res = await base_url.post(
+        `/order/${service?.id}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("ORDER SUCCESS:", res.data);
+
       setShowModal(false);
+    } catch (err) {
+      setErrors(
+        err.response?.data?.message || "Order yuborishda xatolik"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="relative w-full max-w-2xl rounded-2xl bg-gradient-to-br from-[#1E2238]/90 to-[#0F172A]/90 backdrop-blur-xl border border-white/10 shadow-[0_0_40px_rgba(0,112,244,0.3)] p-6 text-white animate-fadeIn">
-        <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 blur-2xl rounded-2xl -z-10"></div>
 
+      <div className="relative w-full max-w-2xl rounded-2xl bg-gradient-to-br from-[#1E2238]/90 to-[#0F172A]/90 p-6 text-white">
+
+        {/* CLOSE */}
         <button
           onClick={() => setShowModal(false)}
-          className="absolute top-4 right-4 z-50 flex items-center justify-center w-10 h-10 rounded-full bg-white/5 hover:bg-blue-500/20 text-gray-300 hover:text-white transition"
+          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/5"
         >
           <IoMdClose size={24} />
         </button>
 
-        <h2 className="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 text-transparent bg-clip-text">
+        <h2 className="text-2xl font-bold text-center mb-6">
           Buyurtma berish
         </h2>
 
+        {/* ERROR MESSAGE */}
+        {errors && (
+          <p className="text-center text-red-500 mb-3">{errors}</p>
+        )}
+
         <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          {/* Company */}
-          <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-300">Kompaniya nomi</label>
+
+          {/* COMPANY */}
+          <input
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            placeholder="Kompaniya nomi"
+            className="px-4 py-2 rounded-lg bg-white/5 border border-white/10"
+          />
+
+          {/* AMOUNT */}
+          <input
+            value={orderAmount}
+            onChange={handleAmount}
+            placeholder="Narx"
+            className="px-4 py-2 rounded-lg bg-white/5 border border-white/10"
+          />
+
+          {/* DEADLINE */}
+          <input
+            type="date"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+            className="px-4 py-2 rounded-lg bg-white/5 border border-white/10"
+          />
+
+          {/* CASHBACK */}
+          <div className="flex items-center gap-3">
             <input
-              type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              placeholder="My Company"
-              className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 outline-none transition-all"
+              type="checkbox"
+              checked={useCashback}
+              onChange={(e) => setUseCashback(e.target.checked)}
             />
-            {errors.companyName && <p className="text-red-500 text-sm mt-1">{errors.companyName}</p>}
+            <label>Cashback ishlatish</label>
           </div>
 
-          {/* Amount */}
-          <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-300">Buyurtma narxi ($)</label>
-            <input
-              type="text"
-              value={orderAmount}
-              onChange={handleAmount}
-              placeholder="1000"
-              className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-blue-400 focus:ring-2 focus:ring-blue-400 outline-none transition-all"
-            />
-            {errors.orderAmount && <p className="text-red-500 text-sm mt-1">{errors.orderAmount}</p>}
-          </div>
+          {/* DESCRIPTION */}
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Izoh"
+            className="sm:col-span-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10"
+          />
 
-          {/* Deadline */}
-          <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-300">Deadline</label>
-            <input
-              type="date"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-              className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-purple-400 focus:ring-2 focus:ring-purple-400 outline-none transition-all"
-            />
-            {errors.deadline && <p className="text-red-500 text-sm mt-1">{errors.deadline}</p>}
-          </div>
+          {/* SUBMIT */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="sm:col-span-2 py-3 bg-blue-600 rounded-xl"
+          >
+            {loading ? "Yuborilmoqda..." : "Buyurtma berish"}
+          </button>
 
-          {/* Cashback */}
-          <div className="flex flex-col mt-4 sm:mt-6">
-            <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-lg px-4 py-2 w-max">
-              <input
-                type="checkbox"
-                checked={useCashback}
-                onChange={(e) => setUseCashback(e.target.checked)}
-                className="w-5 h-5 accent-cyan-400 cursor-pointer transition-all duration-200 hover:scale-110"
-              />
-              <label className="text-gray-300 select-none">Cashback ishlatish</label>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="sm:col-span-2 flex flex-col gap-1">
-            <label className="text-sm text-gray-300">Izoh</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows="4"
-              placeholder="Qo‘shimcha ma’lumot..."
-              className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 outline-none transition-all resize-none"
-            />
-          </div>
-
-          {/* Submit */}
-          <div className="sm:col-span-2 mt-4">
-            <button
-              type="submit"
-              className="w-full py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(0,112,244,0.6)] transition-all duration-300"
-            >
-              Buyurtmani yuborish
-            </button>
-          </div>
         </form>
       </div>
     </div>

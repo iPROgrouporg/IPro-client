@@ -24,7 +24,7 @@ import { YearNumber } from "../../components/ui/YearNumber.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const aboutus = () => {
+const AboutUs = () => {
     const imagesRef = useRef([]);
 
     useEffect(() => {
@@ -458,4 +458,4 @@ const aboutus = () => {
     );
 };
 
-export default aboutus;
+export default AboutUs;

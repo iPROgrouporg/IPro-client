@@ -60,6 +60,8 @@ i18n
   successMessage: "Siz muvaffaqiyatli ro'yxatdan o'tdingiz!",
   rtButton: "Tasdiqlash",
   rBack:"Ortga",
+  out:"Tizimdan chiqish",
+
 
                     yandex_map: "Yandex Xarita",
                     google_map: "Google Xarita",
@@ -211,6 +213,7 @@ i18n
                     mobile_applications: "Mobile ilovalar",
                     targeting: "Targeting",
                     marketing: "Marketing",
+                    hi:"Salom",
 
 
                     // /////////////////////////////////////////////////////////////
@@ -334,6 +337,8 @@ i18n
   rButton:"Continue",
   rtButton:"Confirmation",
   rBack:"Back",
+  out:"Sign out",
+  hi:"Hi",
                     
                     yandex_map: "Yandex map",
                     google_map: "Google map",
@@ -607,6 +612,8 @@ i18n
   rButton: "Продолжить",
   rtButton: "Подтверждение",
   rBack: "Назад",
+  out:"Выход",
+  hi:"Привет",
 
                     yandex_map: "Яндекс карта",
                     google_map: "Карта Google",

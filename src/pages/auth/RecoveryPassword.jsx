@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/icons/Logo.svg";
 import { ProgressBar, StepperCircles } from "./RegisterStepper";
+import { base_url } from "../../connection/BaseUrl";
 
 const RecoveryPassword = () => {
   const navigate = useNavigate();
@@ -11,6 +12,8 @@ const RecoveryPassword = () => {
   const otpLength = 6;
 
   const [step, setStep] = useState(1);
+
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     phone: "",
@@ -26,24 +29,29 @@ const RecoveryPassword = () => {
 
   const errorClass = "text-red-500 text-xs mt-1";
 
-  // OTP
+  // ================= HELPERS =================
+  const formatPhone = (phone) => phone.replace(/\+/g, ""); // +998 -> 998
+
+  // ================= OTP =================
   const handleOtpChange = (e, index) => {
     const value = e.target.value;
     if (!/^\d?$/.test(value)) return;
 
-    const newOtp = formData.smsCode.split("");
-    newOtp[index] = value;
+    const otpArray = formData.smsCode.split("");
+    otpArray[index] = value;
 
-    setFormData((prev) => ({ ...prev, smsCode: newOtp.join("") }));
+    const newOtp = otpArray.join("");
+
+    setFormData((prev) => ({ ...prev, smsCode: newOtp }));
 
     if (value && index < otpLength - 1) {
-      inputRefs.current[index + 1].focus();
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace" && !formData.smsCode[index] && index > 0) {
-      inputRefs.current[index - 1].focus();
+      inputRefs.current[index - 1]?.focus();
     }
   };
 
@@ -54,7 +62,7 @@ const RecoveryPassword = () => {
     setFormData((prev) => ({ ...prev, smsCode: paste }));
   };
 
-  // INPUT
+  // ================= INPUT =================
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -62,6 +70,7 @@ const RecoveryPassword = () => {
       const v = value.replace(/\s+/g, "");
       if (!/^\+?\d*$/.test(v)) return;
       if (v.length > 13) return;
+
       setFormData((prev) => ({ ...prev, phone: v }));
       return;
     }
@@ -69,7 +78,6 @@ const RecoveryPassword = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // PHONE UX
   const handlePhoneFocus = () => {
     if (!formData.phone) {
       setFormData((prev) => ({ ...prev, phone: "+998" }));
@@ -82,50 +90,116 @@ const RecoveryPassword = () => {
     }
   };
 
-  // VALIDATION
-  const validateStep1 = () => {
-    const err = {};
-    if (!formData.phone.startsWith("+998") || formData.phone.length !== 13) {
-      err.phone = "Telefon noto‘g‘ri";
+  // ================= API CALLS =================
+
+  // STEP 1 → SEND OTP
+  const sendOtp = async () => {
+    try {
+      setLoading(true);
+
+      const res = await base_url.post("/auth/forgot-password", {
+        phoneNumber: formatPhone(formData.phone),
+      });
+
+      setStep(2);
+      setErrors({});
+    } catch (err) {
+      setErrors({
+        phone: err.response?.data?.message || "Xatolik yuz berdi",
+      });
+    } finally {
+      setLoading(false);
     }
-    setErrors(err);
-    return Object.keys(err).length === 0;
+  };
+
+  // STEP 2 → VERIFY OTP
+  const verifyOtp = async () => {
+    try {
+      setLoading(true);
+
+      await base_url.post("/auth/verify-reset-otp", {
+        phoneNumber: formatPhone(formData.phone),
+        otp: formData.smsCode,
+      });
+
+      setStep(3);
+      setErrors({});
+    } catch (err) {
+      setErrors({
+        smsCode: err.response?.data?.message || "Kod noto‘g‘ri",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // STEP 3 → RESET PASSWORD
+  const resetPassword = async () => {
+    try {
+      setLoading(true);
+
+      await base_url.post("/auth/reset-password", {
+        phoneNumber: formatPhone(formData.phone),
+        newPassword: formData.newPassword,
+      });
+
+      navigate("/login");
+    } catch (err) {
+      setErrors({
+        confirmPassword: err.response?.data?.message || "Xatolik",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ================= VALIDATION =================
+  const validateStep1 = () => {
+    if (!formData.phone.startsWith("+998") || formData.phone.length !== 13) {
+      setErrors({ phone: "Telefon noto‘g‘ri" });
+      return false;
+    }
+    return true;
   };
 
   const validateStep2 = () => {
-    const err = {};
-    if (!formData.smsCode || formData.smsCode.length !== 6) {
-      err.smsCode = "SMS kod 6 ta raqam";
+    if (formData.smsCode.length !== 6) {
+      setErrors({ smsCode: "6 ta kod kiriting" });
+      return false;
     }
-    setErrors(err);
-    return Object.keys(err).length === 0;
+    return true;
   };
 
   const validateStep3 = () => {
-    const err = {};
-    if (!formData.newPassword || formData.newPassword.length < 8) {
-      err.newPassword = "Parol kamida 8 ta";
+    if (formData.newPassword.length < 8) {
+      setErrors({ newPassword: "Kamida 8 ta belgi" });
+      return false;
     }
+
     if (formData.newPassword !== formData.confirmPassword) {
-      err.confirmPassword = "Parollar mos emas";
+      setErrors({ confirmPassword: "Parollar mos emas" });
+      return false;
     }
-    setErrors(err);
-    return Object.keys(err).length === 0;
+
+    return true;
   };
 
-  // SUBMIT
-  const handleSubmit = () => {
+  // ================= SUBMIT =================
+  const handleSubmit = async () => {
     if (step === 1) {
-      if (validateStep1()) setStep(2);
-    } else if (step === 2) {
-      if (validateStep2()) setStep(3);
-    } else if (step === 3) {
-      if (validateStep3()) {
-        setTimeout(() => navigate("/login"), 1500);
-      }
+      if (validateStep1()) await sendOtp();
+    }
+
+    if (step === 2) {
+      if (validateStep2()) await verifyOtp();
+    }
+
+    if (step === 3) {
+      if (validateStep3()) await resetPassword();
     }
   };
 
+  // ================= UI (UNCHANGED) =================
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white">
 
@@ -134,7 +208,12 @@ const RecoveryPassword = () => {
 
         {/* Header */}
         <div className="flex items-center justify-between px-4 sm:px-6 lg:px-10 py-4">
-          <img src={Logo} alt="Logo" className="w-20 cursor-pointer sm:w-24" onClick={() => navigate("/")} />
+          <img
+            src={Logo}
+            alt="Logo"
+            className="w-20 cursor-pointer sm:w-24"
+            onClick={() => navigate("/")}
+          />
 
           <button
             onClick={() => navigate("/login")}
@@ -150,7 +229,9 @@ const RecoveryPassword = () => {
 
             {/* TITLE */}
             <div className="text-center mb-6">
-              <h1 className="text-2xl sm:text-3xl font-bold">Parolni tiklash</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold">
+                Parolni tiklash
+              </h1>
               <p className="text-gray-400 text-sm mt-1">
                 {step === 1 && "Telefon raqamingizni kiriting"}
                 {step === 2 && "SMS kodni kiriting"}
@@ -166,7 +247,6 @@ const RecoveryPassword = () => {
             {step === 1 && (
               <div>
                 <input
-                  ref={phoneRef}
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
@@ -183,7 +263,8 @@ const RecoveryPassword = () => {
             {step === 2 && (
               <>
                 <p className="text-center text-sm text-gray-500 mb-4">
-                  Kod yuborildi: <span className="font-medium">{formData.phone}</span>
+                  Kod yuborildi:{" "}
+                  <span className="font-medium">{formData.phone}</span>
                 </p>
 
                 <div onPaste={handlePaste} className="flex justify-between gap-2">
@@ -196,13 +277,16 @@ const RecoveryPassword = () => {
                       onChange={(e) => handleOtpChange(e, index)}
                       onKeyDown={(e) => handleKeyDown(e, index)}
                       ref={(el) => (inputRefs.current[index] = el)}
-                      className={`w-12 h-12 text-center border-2 rounded-lg text-lg 
-                      ${errors.smsCode ? "border-red-500" : "border-gray-300"}`}
+                      className={`w-12 h-12 text-center border-2 rounded-lg text-lg ${
+                        errors.smsCode ? "border-red-500" : "border-gray-300"
+                      }`}
                     />
                   ))}
                 </div>
 
-                {errors.smsCode && <p className="text-red-500 text-xs mt-2">{errors.smsCode}</p>}
+                {errors.smsCode && (
+                  <p className="text-red-500 text-xs mt-2">{errors.smsCode}</p>
+                )}
               </>
             )}
 
@@ -216,40 +300,44 @@ const RecoveryPassword = () => {
                   onChange={handleChange}
                   className={`${inputClass} ${errors.newPassword && "border-red-500"}`}
                 />
-                {errors.newPassword && <p className={errorClass}>{errors.newPassword}</p>}
+                {errors.newPassword && (
+                  <p className={errorClass}>{errors.newPassword}</p>
+                )}
 
                 <input
                   type="password"
                   name="confirmPassword"
                   placeholder="Parolni takrorlang"
                   onChange={handleChange}
-                  className={`${inputClass} ${errors.confirmPassword && "border-red-500"}`}
+                  className={`${inputClass} ${
+                    errors.confirmPassword && "border-red-500"
+                  }`}
                 />
-                {errors.confirmPassword && <p className={errorClass}>{errors.confirmPassword}</p>}
+                {errors.confirmPassword && (
+                  <p className={errorClass}>{errors.confirmPassword}</p>
+                )}
               </div>
             )}
 
             {/* BUTTONS */}
             <div className="mt-6 flex gap-3">
 
-              {/* ORQAGA */}
               {(step === 2 || step === 3) && (
                 <button
                   onClick={() => setStep(step - 1)}
-                  className="w-1/2 border border-gray-300 py-2.5 rounded-md font-medium hover:bg-gray-100"
+                  className="w-1/2 border border-gray-300 py-2.5 rounded-md"
                 >
                   Ortga
                 </button>
               )}
 
-              {/* ASOSIY */}
               <button
+                disabled={loading}
                 onClick={handleSubmit}
-                className={`${step === 1 ? "w-full" : "w-1/2"} bg-blue-600 text-white py-2.5 rounded-md font-medium hover:bg-blue-700`}
+                className={`${step === 1 ? "w-full" : "w-1/2"} bg-blue-600 text-white py-2.5 rounded-md`}
               >
-                {step === 3 ? "Saqlash" : "Davom etish"}
+                {loading ? "Yuklanmoqda..." : step === 3 ? "Saqlash" : "Davom etish"}
               </button>
-
             </div>
 
           </div>
