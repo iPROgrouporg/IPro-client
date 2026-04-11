@@ -32,13 +32,13 @@ const LangDropdown = ({ openDropdown, setOpenDropdown }) => {
         <img
           src={flags[currentLang]}
           alt="lang"
-          className="w-7 h-4 object-cover"
+          className="w-6 h-4 object-cover"
         />
       </button>
 
       {/* DROPDOWN */}
       {openDropdown === "lang" && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-24 z-50">
+        <div className="absolute  top-full left-1/2 -translate-x-1/2 mt-2 w-10 z-50">
           <div className="py-2 px-2 bg-[#16182B] rounded-none flex flex-col gap-2 items-center">
 
             {Object.entries(flags).map(([key, flag]) => (
@@ -50,7 +50,7 @@ const LangDropdown = ({ openDropdown, setOpenDropdown }) => {
                 <img
                   src={flag}
                   alt={key}
-                  className={`w-7 h-4 object-cover ${
+                  className={`w-6 h-4 object-cover ${
                     currentLang === key ? "ring-2 ring-blue-500" : ""
                   }`}
                 />

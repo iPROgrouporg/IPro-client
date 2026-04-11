@@ -128,7 +128,7 @@ const AboutUs = () => {
                     </div>
                 </section>
 
-                <section className="container mx-auto px-10 sm:px-6 lg:px-10">
+                {/* <section className="container mx-auto px-10 sm:px-6 lg:px-10">
                     <div
                         className="flex px-8 flex-col lg:flex-row justify-between items-center text-white mt-20 mb-10 gap-6 text-center lg:text-left">
                         <img
@@ -180,14 +180,14 @@ const AboutUs = () => {
                             </a>
                         </div>
                     </div>
-                </section>
+                </section> */}
 
-                <section
+                {/* <section
                     ref={sectionRef}
                     className="container mx-auto px-10 sm:px-6 lg:px-10"
                 >
                     {/* Title Section */}
-                    <div
+                    {/* <div
                         className="flex px-8 flex-col lg:flex-row justify-between items-center text-white mt-40 mb-10 gap-6 text-center lg:text-left">
                         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
                             {t("expanding_team")}
@@ -197,11 +197,9 @@ const AboutUs = () => {
                             alt=""
                             className="w-full max-w-[200px] sm:max-w-[250px] lg:max-w-[300px] mx-auto lg:mx-0"
                         />
-                    </div>
+                    </div> */}
 
-                    {/* Images Grid */}
-                    <div className="flex px-7 p-3 flex-col lg:flex-row justify-between gap-10 overflow-hidden">
-                        {/* Left Column */}
+                    {/* <div className="flex px-7 p-3 flex-col lg:flex-row justify-between gap-10 overflow-hidden">
                         <div className="flex flex-col items-center gap-14 w-full lg:w-1/2">
                             <a href="#">
                                 <img
@@ -217,10 +215,9 @@ const AboutUs = () => {
                                     className="w-full rounded-md mt-10 shadow-md hover:shadow-[0_0_10px_5px_rgba(0,122,255,0.6)] transition-all duration-300 cursor-pointer"
                                 />
                             </a>
-                        </div>
+                        </div> */}
 
-                        {/* Right Column */}
-                        <div className="flex flex-col items-center xl:items-end gap-14 w-full lg:w-1/2">
+                        {/* <div className="flex flex-col items-center xl:items-end gap-14 w-full lg:w-1/2">
                             <a href="#">
                                 <img
                                     src={officeimgY}
@@ -237,10 +234,9 @@ const AboutUs = () => {
                             </a>
                         </div>
                     </div>
-                </section>
+                </section>  */}
 
-                <section className="container mx-auto px-10 sm:px-6 lg:px-10">
-                    {/* Title Section */}
+                {/* <section className="container mx-auto px-10 sm:px-6 lg:px-10">
                     <div
                         className="flex px-8 flex-col lg:flex-row justify-between items-center text-white mt-20 mb-10 gap-6 text-center lg:text-left">
                         <img
@@ -260,9 +256,7 @@ const AboutUs = () => {
                         </h1>
                     </div>
 
-                    {/* Images Grid */}
                     <div className="flex  px-7 p-3 flex-col lg:flex-row justify-between gap-10  overflow-hidden">
-                        {/* Left Column */}
                         <div className="flex flex-col items-center gap-14 w-full lg:w-1/2">
                             <a href="#">
                                 <img
@@ -284,7 +278,6 @@ const AboutUs = () => {
                             </a>
                         </div>
 
-                        {/* Right Column */}
                         <div className="flex flex-col  items-center xl:items-end gap-14 w-full lg:w-1/2">
                             <a href="#">
                                 <img
@@ -308,10 +301,9 @@ const AboutUs = () => {
                             </a>
                         </div>
                     </div>
-                </section>
+                </section> */}
 
-                <section className="container mx-auto px-10 sm:px-6 lg:px-10">
-                    {/* Title Section */}
+                {/* <section className="container mx-auto px-10 sm:px-6 lg:px-10">
                     <div
                         className="flex px-8 flex-col lg:flex-row justify-between items-center text-white mt-20 mb-10 gap-6 text-center lg:text-left">
                         <h1
@@ -331,9 +323,7 @@ const AboutUs = () => {
                         />
                     </div>
 
-                    {/* Images Section */}
                     <div className="flex  px-7 p-3 flex-col lg:flex-row justify-between gap-10  overflow-hidden">
-                        {/* Left Column */}
                         <div className="flex flex-col items-center gap-14 w-full lg:w-1/2">
                             <a href="#">
                                 <img
@@ -355,7 +345,6 @@ const AboutUs = () => {
                             </a>
                         </div>
 
-                        {/* Right Column */}
                         <div className="flex flex-col  items-center xl:items-end gap-14 w-full lg:w-1/2">
                             <a href="#">
                                 <img
@@ -379,10 +368,9 @@ const AboutUs = () => {
                             </a>
                         </div>
                     </div>
-                </section>
+                </section> */}
 
-                <section className="container mx-auto px-10 sm:px-6 lg:px-10">
-                    {/* Title Section */}
+                {/* <section className="container mx-auto px-10 sm:px-6 lg:px-10">
                     <div
                         className="flex px-8 flex-col lg:flex-row justify-between items-center text-white mt-20 mb-10 gap-6 text-center lg:text-left">
                         <img
@@ -402,9 +390,7 @@ const AboutUs = () => {
                         </h1>
                     </div>
 
-                    {/* Images Section */}
                     <div className="flex mb-10  px-7 p-3 flex-col lg:flex-row justify-between gap-10  overflow-hidden">
-                        {/* Left Column */}
                         <div className="flex flex-col items-center gap-14 w-full lg:w-1/2">
                             <a href="#">
                                 <img
@@ -426,7 +412,6 @@ const AboutUs = () => {
                             </a>
                         </div>
 
-                        {/* Right Column */}
                         <div className="flex flex-col  items-center xl:items-end gap-14 w-full lg:w-1/2">
                             <a href="#">
                                 <img
@@ -450,7 +435,7 @@ const AboutUs = () => {
                             </a>
                         </div>
                     </div>
-                </section>
+                </section> */}
 
             </main>
             <Footer/>

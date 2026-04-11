@@ -136,9 +136,9 @@ Narx : ${narx}
               <option value="" disabled selected>
                 {t("select_department")}
               </option>
-              <option value="Junior">Junior</option>
-              <option value="Middle">Middle</option>
-              <option value="Senior">Senior</option>
+              <option value="Junior">Junior (1-3) yil</option>
+              <option value="Middle">Middle (3-6) yil</option>
+              <option value="Senior">Senior (6+) yil</option>
             </select>
             {errors.daraja && <p className="text-red-500 text-sm mt-1">{errors.daraja}</p>}
           </div>

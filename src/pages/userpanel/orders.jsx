@@ -1,125 +1,294 @@
-import React, { useState } from "react";
-import { IoClose } from "react-icons/io5";
+import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { IoSearch, IoClose, IoSparkles } from "react-icons/io5";
 
-const orderList = [
-  { id: 1, title: "Ux&UI dizayn", description: "Loyiha Mindmapini ishlab chiqish va ushbu arxetektura asosida optimal yechimga ega dizaynlarni chizish" },
-  { id: 2, title: "Frontend Development", description: "React va Vue orqali mukammal UI yaratish va interaktiv sahifalar yaratish" },
-  { id: 3, title: "Backend Development", description: "Node.js va Django orqali server tomonida ishlovchi tizimlarni yaratish" },
-  { id: 4, title: "Mobile App Development", description: "React Native va Flutter orqali mobil ilovalar yaratish" },
-  { id: 5, title: "SEO Optimization", description: "Web-saytlarni Google va boshqa qidiruv tizimlarida optimallashtirish" }
-];
+const inputStyle =
+  "w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.25)] transition";
 
+const ServicesPage = () => {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
-const Orders = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+
+  const [form, setForm] = useState({
+    companyName: "",
+    orderAmount: "",
+    deadline: "",
+    description: "",
+    useCashback: false,
+  });
+
+  // =====================
+  // GET SERVICES
+  // =====================
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:2025/api/v1/service/all"
+        );
+
+        setServices(res.data?.data || res.data || []);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
+
+  // =====================
+  // FILTER (PERFECT)
+  // =====================
+  const filtered = useMemo(() => {
+    return services.filter((s) =>
+      (s.name || "").toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search, services]);
+
+  const openOrder = (service) => {
+    setSelectedService(service);
+    setOpenModal(true);
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
 
   return (
-    <div className="p-4 sm:p-10 overflow-hidden">
-      <h2 className="text-2xl sm:text-3xl font-semibold mb-8 sm:mb-11">Shopping Cart</h2>
+    <div className=" bg-[#0A0F1F] text-white p-6 sm:p-10">
 
-      <div className="max-h-[400px] overflow-y-auto space-y-4 pr-2">
-        {orderList.map((order) => (
-          <div key={order.id} className="w-full h-[194px] bg-[#252527] px-6 py-6">
-            <h1 className="text-lg sm:text-2xl font-semibold text-center mb-3">{order.title}</h1>
-            <p className="text-sm sm:text-base font-normal text-center">{order.description}</p>
+      {/* HEADER */}
+      <div className="flex flex-col sm:flex-row justify-between gap-4 mb-10">
+
+        <div>
+          <h1 className="text-3xl font-bold flex items-center gap-2">
+            <IoSparkles className="text-blue-400" />
+            Services
+          </h1>
+          <p className="text-white/50 text-sm mt-1">
+            Choose service and create your order
+          </p>
+        </div>
+
+        {/* SEARCH */}
+        <div className="relative w-full sm:w-80">
+          <IoSearch className="absolute left-4 top-4 text-white/40" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search service..."
+            className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-blue-500"
+          />
+        </div>
+      </div>
+
+      {/* LOADING */}
+      {loading && (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div
+              key={i}
+              className="h-44 rounded-2xl bg-white/5 animate-pulse"
+            />
+          ))}
+        </div>
+      )}
+
+      {/* SERVICES GRID */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        {filtered.map((s) => (
+          <div
+            key={s.id}
+            onClick={() => openOrder(s)}
+            className="
+              group relative cursor-pointer
+              p-6 rounded-2xl
+              bg-gradient-to-b from-white/5 to-white/0
+              border border-white/10
+              hover:border-blue-500
+              hover:scale-[1.02]
+              transition-all duration-300
+            "
+          >
+
+            {/* ICON */}
+            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-500/20 text-blue-400 mb-4">
+              <IoSparkles />
+            </div>
+
+            {/* TITLE */}
+            <h2 className="text-lg font-semibold group-hover:text-blue-400">
+              {s.name}
+            </h2>
+
+            {/* DESC */}
+            <p className="text-sm text-white/60 mt-2 line-clamp-3">
+              {s.description || "No description available"}
+            </p>
+
+            {/* FOOTER */}
+            <div className="mt-4 flex justify-between items-center">
+              <span className="text-xs px-3 py-1 rounded-full bg-white/10">
+                Service
+              </span>
+
+              <span className="text-xs text-blue-400 opacity-0 group-hover:opacity-100 transition">
+                Click to order →
+              </span>
+            </div>
           </div>
         ))}
       </div>
 
-      <button
-        className="bg-[#0186EF] rounded-lg w-full sm:w-auto px-10 py-4 mt-6 text-white"
-        onClick={() => setIsOpen(true)}
-      >
-        Make an order
-      </button>
+      {/* ===================== */}
+      {/* MODAL (PRO VERSION) */}
+      {/* ===================== */}
+      {openModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
 
-    <div
-        className={`fixed inset-0 bg-black bg-opacity-60 z-40 transition-opacity duration-300 ${
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={() => setIsOpen(false)}
-      ></div>
+  {/* BACKDROP */}
+  <div
+    className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+    onClick={() => setOpenModal(false)}
+  />
 
-      {/* Modal Content */}
-      <div
-        className={`fixed top-1/2 left-1/2 max-w-[748px] w-full max-h-[90vh] overflow-y-auto bg-[#292d32] rounded-lg p-6 sm:p-[51px] shadow-lg z-50
-          transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300
-          ${isOpen ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-95 pointer-events-none"}
-        `}
-      >
-        <div className="flex justify-between items-start mb-10">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white">Request form</h2>
-          <button
-            className="text-white text-3xl"
-            onClick={() => setIsOpen(false)}
-            aria-label="Close modal"
-          >
-            <IoClose />
-          </button>
-        </div>
+  {/* MODAL */}
+  <div className="
+    relative w-full max-w-2xl
+    bg-[#0b1020]/95
+    border border-white/10
+    rounded-2xl
+    shadow-[0_0_40px_rgba(59,130,246,0.15)]
+    overflow-hidden
+  ">
 
-        <form action="#" className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-white">
-          <label className="flex flex-col gap-2">
-            <span>*Company name</span>
-            <input
-              type="text"
-              className="p-3 bg-[#3A3F47] rounded-md text-white outline-none w-full"
-              autoComplete="off"
-            />
-          </label>
-
-          <label className="flex flex-col gap-2">
-            <span>*Service type</span>
-            <input
-              type="text"
-              className="p-3 bg-[#3A3F47] rounded-md text-white outline-none w-full"
-              autoComplete="off"
-            />
-          </label>
-
-          <label className="flex flex-col gap-2">
-            <span>*Deadline (in a month)</span>
-            <input
-              type="text"
-              className="p-3 bg-[#3A3F47] rounded-md text-white outline-none w-full"
-              autoComplete="off"
-            />
-          </label>
-
-          <label className="flex flex-col gap-2">
-            <span>*Proposed amount (in dollars)</span>
-            <input
-              type="text"
-              className="p-3 bg-[#3A3F47] rounded-md text-white outline-none w-full"
-              autoComplete="off"
-            />
-          </label>
-
-          <label className="flex flex-col gap-2 sm:col-span-2">
-            <span>Link for example</span>
-            <input
-              type="text"
-              className="p-3 bg-[#3A3F47] rounded-md text-white outline-none w-full"
-              autoComplete="off"
-            />
-          </label>
-
-          <label className="flex flex-col gap-2 sm:col-span-2">
-            <span>*Other description</span>
-            <textarea
-              className="h-[232px] resize-none p-3 bg-[#3A3F47] rounded-md text-white outline-none w-full"
-            />
-          </label>
-        </form>
-
-        <div className="flex justify-center mt-6">
-          <button className="bg-blue-600 hover:bg-blue-700 transition w-full py-3 rounded-md text-white text-lg font-semibold">
-            Make an order
-          </button>
-        </div>
+    {/* HEADER */}
+    <div className="flex justify-between items-start p-6 border-b border-white/10">
+      <div>
+        <h2 className="text-xl font-bold text-white">
+          {selectedService?.name}
+        </h2>
+        <p className="text-xs text-white/50 mt-1">
+          Fill order details carefully
+        </p>
       </div>
+
+      <button
+        onClick={() => setOpenModal(false)}
+        className="p-2 rounded-full hover:bg-white/10 transition"
+      >
+        <IoClose className="text-2xl text-white" />
+      </button>
+    </div>
+
+    {/* FORM */}
+    <div className="p-6 grid grid-cols-2 gap-5">
+
+      {/* COMPANY */}
+
+       <input
+        name="Service type"
+        placeholder="Service type"
+        className={inputStyle}
+        onChange={handleChange}
+      /> 
+
+
+      <input
+        name="companyName"
+        placeholder="Company name"
+        className={inputStyle}
+        onChange={handleChange}
+      />
+
+      {/* ORDER AMOUNT (ONLY NUMBERS) */}
+      <input
+        name="orderAmount"
+        placeholder="Order amount ($)"
+        className={inputStyle}
+        inputMode="numeric"
+        onChange={(e) => {
+          const value = e.target.value.replace(/\D/g, ""); // only digits
+          setForm((prev) => ({ ...prev, orderAmount: value }));
+        }}
+        value={form.orderAmount}
+      />
+
+      {/* DEADLINE (ONLY NUMBERS) */}
+      <input
+        name="deadline"
+        placeholder="Deadline (days)"
+        className={inputStyle}
+        inputMode="numeric"
+        onChange={(e) => {
+          const value = e.target.value.replace(/\D/g, "");
+          setForm((prev) => ({ ...prev, deadline: value }));
+        }}
+        value={form.deadline}
+      />
+
+      {/* DESCRIPTION */}
+      <textarea
+        name="description"
+        placeholder="Project description..."
+        className={`${inputStyle} col-span-2 h-28 resize-none`}
+        onChange={handleChange}
+      />
+
+      {/* CASHBACK */}
+      <label className="
+        col-span-2 flex items-center gap-3
+        text-sm text-white/70
+        bg-white/5 border border-white/10
+        p-3 rounded-xl cursor-pointer
+        hover:bg-white/10 transition
+      ">
+        <input
+          type="checkbox"
+          name="useCashback"
+          onChange={handleChange}
+        />
+        <span>
+          <b className="text-white">Use cashback balance</b>
+          <p className="text-xs text-white/50">
+            Apply your earned cashback to reduce order price
+          </p>
+        </span>
+      </label>
+
+    </div>
+
+    {/* FOOTER */}
+    <div className="p-6 border-t border-white/10">
+      <button className="
+        w-full py-3 rounded-xl
+        bg-gradient-to-r from-blue-600 to-blue-500
+        hover:from-blue-500 hover:to-blue-400
+        text-white font-semibold
+        shadow-lg shadow-blue-500/20
+        transition
+      ">
+        Submit Order
+      </button>
+    </div>
+
+  </div>
+</div>
+      )}
     </div>
   );
 };
 
-export default Orders;
+export default ServicesPage;

@@ -51,13 +51,13 @@ const Portfolio = () => {
             <Header />
             <main className='mt-20 relative z-10'>
                 <section>
-                    <div className="container mx-auto mb-10 px-5 xl:px-14">
+                    <div className="container  pt-20  mx-auto mb-10 px-5 xl:px-14">
                        <motion.h1
   data-aos="fade-up"
   initial={{ opacity: 0, y: -50 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ duration: 1 }}
-  className="text-white text-center md:text-left text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500 text-[42px] md:text-[80px] font-extrabold leading-[1.1] drop-shadow-[0_5px_30px_rgba(0,112,244,0.9)] mb-16"
+  className="text-white text-center  md:text-left text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500 text-[42px] md:text-[80px] font-extrabold leading-[1.1] drop-shadow-[0_5px_30px_rgba(0,112,244,0.9)] mb-16"
 >
   {t("projects").toUpperCase()}
 </motion.h1>

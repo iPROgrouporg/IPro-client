@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Navigate, NavLink } from "react-router-dom";
+import { Navigate, NavLink, useNavigate } from "react-router-dom";
 import Logo from "../../assets/icons/Logo.svg";
 import { IoPersonOutline } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
@@ -13,6 +13,7 @@ import axios from "axios";
 
 const Header = () => {
   const { t } = useTranslation();
+  const navigate =useNavigate()
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -46,7 +47,7 @@ const Header = () => {
     if (!token) return;
 
     axios
-      .get("http://localhost:2025/api/v1/auth/me", {
+      .get("https://api.iprogroup.org/api/v1/auth/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -58,6 +59,8 @@ const Header = () => {
 
         // cashback safe
         setCashback(data?.cashback ?? 0);
+        console.log("USER DATA:", data);
+        
       })
       .catch((err) => {
         console.log("USER ERROR:", err?.response?.status);
@@ -112,7 +115,7 @@ const Header = () => {
 
             {/* 🪙 CASHBACK (UNCHANGED DESIGN) */}
             {token && (
-              <div className="flex items-center gap-1 bg-yellow-500/20 px-3 py-1 rounded-full">
+              <div className="flex items-center gap-1 bg-blue-500/20 px-3 py-1 rounded-full">
                 <span className="text-yellow-400">🪙</span>
                 <span className="text-white font-semibold text-sm">
                   {cashback}
@@ -145,6 +148,12 @@ const Header = () => {
                       <h2 className="font-bold mb-3 text-gray-100">
                         {t('hi')}, {truncateName(user?.fullName)}
                       </h2>
+                        <button
+                        onClick={() => navigate('/user')}
+                        className="w-full text-blue-500 border mb-2 text-sm border-blue-500 py-1.5 rounded-xl hover:bg-blue-500 hover:text-white transition"
+                      >
+                        MY proile
+                      </button>
 
                       {/* SIGN OUT */}
                       <button

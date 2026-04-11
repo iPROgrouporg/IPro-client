@@ -10,7 +10,7 @@ import ProjectInfo from "./pages/portfolio/ProjectInfo.jsx";
 import ProjectPage from "./pages/portfolio/ProjectsPage.jsx";
 import Services from "./pages/services/Services.jsx";
 import Team from "./pages/team/team.jsx";
-import UserProfile from "./pages/userpanel/user";
+import UserProfile from "./pages/userpanel/UserDashboard.jsx";
 
 import Login from "./pages/auth/Login.jsx";
 import RecoveryPassword from "./pages/auth/RecoveryPassword.jsx";
