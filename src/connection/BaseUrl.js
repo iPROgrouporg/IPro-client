@@ -38,6 +38,7 @@ export const portfolioOtzivApi = {
 export const authApi = {
     register: (data) => base_url.post(APP_API.register, data),
     verifyOtp: (data) => base_url.post(APP_API.verifyOtp, data),
+    resendOtp: (phone) => base_url.post(`${APP_API.resetOtp}?phoneNumber}`, { phone }),
     login: (data) => base_url.post(APP_API.login, data),
 }
 export const supportApi = {

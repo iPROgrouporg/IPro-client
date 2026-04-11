@@ -160,7 +160,7 @@ i18n
                     ipro_about: "IPRO haqida",
                     workers: "Hodimlar",
                     vacancies: "Vakansiyalar",
-                    about: "Biz Haqimizda",
+                    about: "BIZ HAQIMIZDA",
                     contact: "Bog'lanish",
                     search: "Qidirish",
                     language: "Tilni o'zgartirish",

@@ -1,43 +1,123 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Logo from "../../assets/icons/Logo.svg";
 import { StepperCircles, ProgressBar } from "./RegisterStepper";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { authApi } from "../../connection/BaseUrl";
+import { Eye, EyeOff } from "lucide-react";
+
+
+
 
 const Register = () => {
-   const [currentStep, setCurrentStep] = useState(1);
-  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+const handlePhoneFocus = () => {
+  if (!formData.phone) {
+    setFormData((prev) => ({ ...prev, phone: "+998" }));
+  }
+};
+
+const handlePhoneBlur = () => {
+  if (formData.phone === "+998") {
+    setFormData((prev) => ({ ...prev, phone: "" }));
+  }
+};
+ const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const phoneRef = useRef(null);
-  const inputRefs = useRef([]);
   const otpLength = 6;
+  const inputRefs = useRef([]);
+  const timerRef = useRef(null);
 
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    password: "",
-    confirmPassword: "",
-    smsCode: "",
+  // ================= SAFE INIT =================
+  const [currentStep, setCurrentStep] = useState(() => {
+    return Number(localStorage.getItem("registerStep")) || 1;
   });
+
+  const [formData, setFormData] = useState(() => {
+    return (
+      JSON.parse(localStorage.getItem("registerForm")) || {
+        firstName: "",
+        lastName: "",
+        phone: "+998",
+        password: "",
+        confirmPassword: "",
+        smsCode: "",
+      }
+    );
+  });
+
+  const [otpExpire, setOtpExpire] = useState(() => {
+    return Number(localStorage.getItem("otpExpire")) || 0;
+  });
+
+  const [otpTimer, setOtpTimer] = useState(0);
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const inputClass = `w-full rounded-md border-2 px-4 py-2 focus:outline-none 
-    border-gray-300 focus:border-blue-500 text-sm sm:text-base transition`;
+  // ================= STYLE FIX (ERROR FIXED) =================
+  const inputClass =
+    "w-full rounded-md border-2 px-4 py-2 focus:outline-none border-gray-300 focus:border-blue-500 text-sm sm:text-base transition";
+
   const errorClass = "text-red-500 text-xs mt-1";
 
-  // OTP
+  // ================= TIMER ENGINE (REAL FIX) =================
+  const syncTimer = () => {
+    const diff = Math.floor((otpExpire - Date.now()) / 1000);
+    setOtpTimer(diff > 0 ? diff : 0);
+  };
+
+  useEffect(() => {
+    syncTimer();
+    const interval = setInterval(syncTimer, 1000);
+    return () => clearInterval(interval);
+  }, [otpExpire]);
+
+  // ================= START OTP =================
+  const startOtpTimer = () => {
+    const expire = Date.now() + 120 * 1000;
+    setOtpExpire(expire);
+    localStorage.setItem("otpExpire", expire);
+  };
+
+  // ================= RESEND =================
+  const handleResendOtp = async () => {
+    const phone = formData.phone.replace(/\D/g, "");
+
+    try {
+      const res = await authApi.resendOtp(phone);
+
+      if (res.data?.success) {
+        setFormData((p) => ({ ...p, smsCode: "" }));
+        startOtpTimer();
+      }
+    } catch (err) {
+      setErrors({ smsCode: "Server error" });
+    }
+  };
+
+  // ================= INPUT =================
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setErrors((p) => ({ ...p, [name]: "" }));
+    setFormData((p) => ({ ...p, [name]: value }));
+  };
+
+  // ================= OTP =================
   const handleOtpChange = (e, index) => {
     const value = e.target.value;
     if (!/^\d?$/.test(value)) return;
 
-    const newOtp = formData.smsCode.split("");
-    newOtp[index] = value;
-    setFormData((prev) => ({ ...prev, smsCode: newOtp.join("") }));
+    const arr = formData.smsCode.split("");
+    arr[index] = value;
+
+    setFormData((p) => ({
+      ...p,
+      smsCode: arr.join(""),
+    }));
 
     if (value && index < otpLength - 1) {
       inputRefs.current[index + 1]?.focus();
@@ -54,162 +134,117 @@ const Register = () => {
     const paste = e.clipboardData.getData("text").slice(0, otpLength);
     if (!/^\d+$/.test(paste)) return;
 
-    setFormData((prev) => ({ ...prev, smsCode: paste }));
-
-    paste.split("").forEach((char, i) => {
-      if (inputRefs.current[i]) {
-        inputRefs.current[i].value = char;
-      }
-    });
+    setFormData((p) => ({ ...p, smsCode: paste }));
   };
 
-  // INPUT
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    // errorni realtime tozalash
-    setErrors((prev) => ({ ...prev, [name]: "" }));
-
-    if (name === "phone") {
-      const v = value.replace(/\s+/g, "");
-      if (!/^\+?\d*$/.test(v)) return;
-      if (v.length > 13) return;
-
-      setFormData((prev) => ({ ...prev, phone: v }));
-      return;
-    }
-
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // VALIDATE
+  // ================= VALIDATE =================
   const validateStep1 = () => {
-    const newErrors = {};
+    const err = {};
+    const phone = formData.phone.replace(/\D/g, "");
 
-    const phone = formData.phone.replace(/\D/g, ""); // 🔥 TO‘G‘RI
-
-    if (!formData.firstName || formData.firstName.trim().length < 3)
-      newErrors.firstName = "Ism kamida 3 ta harf";
-
-    if (!formData.lastName || formData.lastName.trim().length < 3)
-      newErrors.lastName = "Familiya kamida 3 ta harf";
-
+    if (formData.firstName.length < 3) err.firstName = "Ism 3 ta harf";
+    if (formData.lastName.length < 3) err.lastName = "Familiya 3 ta harf";
     if (!phone.startsWith("998") || phone.length !== 12)
-      newErrors.phone = "Telefon noto‘g‘ri";
-
-    if (!formData.password || formData.password.length < 8)
-      newErrors.password = "Parol kamida 8 ta";
-
+      err.phone = "Telefon noto‘g‘ri";
+    if (formData.password.length < 8) err.password = "Parol 8 ta";
     if (formData.password !== formData.confirmPassword)
-      newErrors.confirmPassword = "Parollar mos emas";
+      err.confirmPassword = "Parollar mos emas";
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors(err);
+    return Object.keys(err).length === 0;
   };
 
   const validateStep2 = () => {
-    const newErrors = {};
+    const err = {};
+    if (formData.smsCode.length !== 6)
+      err.smsCode = "SMS kod 6 ta raqam";
 
-    if (!formData.smsCode || formData.smsCode.length !== 6)
-      newErrors.smsCode = "SMS kod 6 ta raqam";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors(err);
+    return Object.keys(err).length === 0;
   };
 
+  // ================= SUBMIT =================
   const handleSubmit = async () => {
-  if (currentStep === 1) {
-    if (!validateStep1()) return;
+    const phone = formData.phone.replace(/\D/g, "");
 
-    setLoading(true);
-    try {
-      const phoneForBackend = formData.phone.replace(/\D/g, "");
+    if (currentStep === 1) {
+      if (!validateStep1()) return;
 
-      const res = await authApi.register({
-        fullName: formData.firstName + " " + formData.lastName,
-        phoneNumber: phoneForBackend,
-        password: formData.password,
-      });
-
-      if (res.data?.success) {
-        setCurrentStep(2);
-      } else {
-        setErrors({ phone: res.data?.message || "Register error" });
-      }
-    } catch (err) {
-      console.log(err);
-      setErrors({ phone: "Server bilan bog‘lanishda xatolik" });
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  else if (currentStep === 2) {
-    if (!validateStep2()) return;
-
-    setLoading(true);
-    try {
-      const phoneForBackend = formData.phone.replace(/\D/g, "");
-
-      const res = await authApi.verifyOtp({
-        phoneNumber: phoneForBackend,
-        otp: formData.smsCode,
-      });
-
-      if (res.data?.success) {
-
-        const loginRes = await authApi.login({
-          phoneNumber: phoneForBackend,
+      setLoading(true);
+      try {
+        const res = await authApi.register({
+          fullName: formData.firstName + " " + formData.lastName,
+          phoneNumber: phone,
           password: formData.password,
         });
 
-        console.log("LOGIN RESPONSE:", loginRes.data);
+        if (res.data?.success) {
+          setCurrentStep(2);
+          localStorage.setItem("registerStep", "2");
 
-        // 🔥 SAFE TOKEN EXTRACTION (ENG MUHIM FIX)
-        const token =
-          loginRes.data?.token ||
-          loginRes.data?.data?.token ||
-          loginRes.data?.accessToken;
-
-        if (!token) {
-          setErrors({ smsCode: "Token topilmadi" });
-          return;
+          startOtpTimer(); // 🔥 REAL FIX
         }
-
-        localStorage.setItem("token", token);
-
-        console.log("TOKEN SAVED:", token);
-
-        setCurrentStep(3);
-
-        setTimeout(() => {
-          navigate("/");
-        }, 500);
-
-      } else {
-        setErrors({ smsCode: res.data?.message || "OTP xato" });
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.log("OTP/LOGIN ERROR:", err.response?.data || err.message);
-      setErrors({ smsCode: "Server bilan bog‘lanishda xatolik" });
-    } finally {
-      setLoading(false);
     }
-  }
-};
 
-  // PHONE UX
-  const handlePhoneFocus = () => {
-    if (!formData.phone) {
-      setFormData((prev) => ({ ...prev, phone: "+998" }));
+    if (currentStep === 2) {
+      if (!validateStep2()) return;
+
+      setLoading(true);
+      try {
+        const res = await authApi.verifyOtp({
+          phoneNumber: phone,
+          otp: formData.smsCode,
+        });
+
+        if (res.data?.success) {
+          const loginRes = await authApi.login({
+            phoneNumber: phone,
+            password: formData.password,
+          });
+
+          const token =
+            loginRes.data?.token ||
+            loginRes.data?.data?.token ||
+            loginRes.data?.accessToken;
+
+          if (!token) return;
+
+          localStorage.setItem("token", token);
+
+          localStorage.removeItem("registerStep");
+          localStorage.removeItem("otpExpire");
+
+          setCurrentStep(3);
+
+          setTimeout(() => navigate("/"), 500);
+        }
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  const handlePhoneBlur = () => {
-    if (formData.phone === "+998") {
-      setFormData((prev) => ({ ...prev, phone: "" }));
-    }
-  };
+  // ================= PERSIST =================
+  useEffect(() => {
+    localStorage.setItem("registerStep", currentStep);
+  }, [currentStep]);
+
+  useEffect(() => {
+    localStorage.setItem("registerForm", JSON.stringify(formData));
+  }, [formData]);
+
+  // ================= CLEANUP =================
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
+
+  const phoneRef = useRef(null);
+
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white">
@@ -267,17 +302,50 @@ const Register = () => {
                     value={formData.phone}/>
                   {errors.phone && <p className={errorClass}>{errors.phone}</p>}
 
-                  <input type="password" name="password" placeholder={t('passwordPlaceholder')}
-                    className={`${inputClass} ${errors.password && "border-red-500"}`}
-                    onChange={handleChange}
-                    value={formData.password}/>
+                  <div className="relative">
+  <input
+    type={showPassword ? "text" : "password"}
+    name="newPassword"
+    onChange={handleChange}
+    className={inputClass}
+    placeholder="Yangi parol"
+  />
+
+   <button
+    type="button"
+    onClick={() => setShowPassword((p) => !p)}
+    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+  >
+    {showPassword ? (
+      <EyeOff size={18} />
+    ) : (
+      <Eye size={18} />
+    )}
+  </button>
+</div>
                   {errors.password && <p className={errorClass}>{errors.password}</p>}
 
-                  <input type="password" name="confirmPassword"
-                    placeholder={t('confirmPasswordPlaceholder')}
-                    className={`${inputClass} ${errors.confirmPassword && "border-red-500"}`}
-                    onChange={handleChange}
-                    value={formData.confirmPassword}/>
+                 <div className="relative mt-3">
+  <input
+    type={showConfirmPassword ? "text" : "password"}
+    name="confirmPassword"
+    onChange={handleChange}
+    className={inputClass}
+    placeholder="Parolni takrorlang"
+  />
+
+  <button
+    type="button"
+    onClick={() => setShowConfirmPassword((p) => !p)}
+    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+  >
+    {showConfirmPassword ? (
+      <EyeOff size={18} />
+    ) : (
+      <Eye size={18} />
+    )}
+  </button>
+</div>
                   {errors.confirmPassword && <p className={errorClass}>{errors.confirmPassword}</p>}
                 </div>
               </div>
@@ -302,6 +370,23 @@ const Register = () => {
                   ))}
                 </div>
                 {errors.smsCode && <p className="text-red-500 text-xs mt-2">{errors.smsCode}</p>}
+
+                <p className="text-center text-xs text-blue-600 mt-2">
+                  {otpTimer > 0
+                    ? `Kod amal qilish vaqti: ${Math.floor(otpTimer / 60)}:${(otpTimer % 60)
+                        .toString()
+                        .padStart(2, "0")}`
+                    : "Kod muddati tugagan"}
+                </p>
+
+                {otpTimer === 0 && (
+                  <button
+                    onClick={handleResendOtp}
+                    className="text-blue-600 text-xs mt-2 underline"
+                  >
+                    Yangi kod olish
+                  </button>
+                )}
               </>
             )}
 

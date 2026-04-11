@@ -50,33 +50,33 @@ const AboutUs = () => {
     }, []);
     const sectionRef = useRef(null);
 
-    useEffect(() => {
-        const images = sectionRef.current.querySelectorAll("img");
+    // useEffect(() => {
+    //     // const images = sectionRef.current.querySelectorAll("img");
 
-        images.forEach((img, index) => {
-            gsap.fromTo(
-                img,
-                {
-                    opacity: 0,
-                    y: index % 2 === 0 ? 80 : -80,
-                    scale: 0.95,
-                },
-                {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    duration: .5,
-                    delay: index * 0.1,
-                    scrollTrigger: {
-                        trigger: img,
-                        start: "top 90%",
-                        toggleActions: "play none none reverse",
-                    },
-                    ease: "power3.out",
-                }
-            );
-        });
-    }, []);
+    //     images.forEach((img, index) => {
+    //         gsap.fromTo(
+    //             img,
+    //             {
+    //                 opacity: 0,
+    //                 y: index % 2 === 0 ? 80 : -80,
+    //                 scale: 0.95,
+    //             },
+    //             {
+    //                 opacity: 1,
+    //                 y: 0,
+    //                 scale: 1,
+    //                 duration: .5,
+    //                 delay: index * 0.1,
+    //                 scrollTrigger: {
+    //                     trigger: img,
+    //                     start: "top 90%",
+    //                     toggleActions: "play none none reverse",
+    //                 },
+    //                 ease: "power3.out",
+    //             }
+    //         );
+    //     });
+    // }, []);
 
 
     const {t} = useTranslation();
@@ -109,7 +109,7 @@ const AboutUs = () => {
                     <div className="flex flex-col lg:flex-row justify-between gap-10 mb-40">
                         {/* Text Section - tepada (mobile), chapda (desktop) */}
                         <div className="w-full lg:w-1/2 mt-5 lg:mt-10">
-                            <h1 className="text-white text-center md:text-left font-black text-3xl sm:text-5xl md:text-[65px] xl:text-[96px] leading-tight mb-6 drop-shadow-[0_5px_20px_rgba(0,112,244,0.8)]">
+                            <h1 className="text-white text-center md:text-left font-black text-xl sm:text-5xl md:text-[65px] xl:text-[96px] leading-tight mb-6 drop-shadow-[0_5px_20px_rgba(0,112,244,0.8)]">
                                 {t("about")}
                             </h1>
                             <p className="text-white text-center md:text-left font-normal text-base sm:text-lg md:text-xl leading-relaxed">

@@ -1,48 +1,129 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/icons/Logo.svg";
 import { ProgressBar, StepperCircles } from "./RegisterStepper";
 import { base_url } from "../../connection/BaseUrl";
+import { Eye, EyeOff } from "lucide-react";
+
 
 const RecoveryPassword = () => {
-  const navigate = useNavigate();
-  const phoneRef = useRef(null);
-  const inputRefs = useRef([]);
+    const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const navigate = useNavigate();
 
   const otpLength = 6;
+  const inputRefs = useRef([]);
+  const timerRef = useRef(null);
 
-  const [step, setStep] = useState(1);
-
-  const [loading, setLoading] = useState(false);
-
-  const [formData, setFormData] = useState({
-    phone: "",
-    smsCode: "",
-    newPassword: "",
-    confirmPassword: "",
+  // ================= STEP (PERSIST) =================
+  const [step, setStep] = useState(() => {
+    return Number(localStorage.getItem("recovery_step")) || 1;
   });
 
+  // ================= FORM (PERSIST) =================
+  const [formData, setFormData] = useState(() => {
+    return (
+      JSON.parse(localStorage.getItem("recovery_form")) || {
+        phone: "+998",
+        smsCode: "",
+        newPassword: "",
+        confirmPassword: "",
+      }
+    );
+  });
+  const handleResendOtp = async () => {
+      const phone = formData.phone.replace(/\D/g, "");
+  
+      try {
+        const res = await authApi.resendOtp(phone);
+  
+        if (res.data?.success) {
+          setFormData((p) => ({ ...p, smsCode: "" }));
+          startOtpTimer();
+        }
+      } catch (err) {
+        setErrors({ smsCode: "Server error" });
+      }
+    };
+
+  // ================= TIMER (FIXED) =================
+  const [otpTimer, setOtpTimer] = useState(() => {
+    return Number(localStorage.getItem("otp_timer")) || 0;
+  });
+
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const inputClass = `w-full rounded-md border-2 px-4 py-2 focus:outline-none 
-  border-gray-300 focus:border-blue-500 text-sm sm:text-base transition`;
+  const inputClass =
+    "w-full rounded-md border-2 px-4 py-2 focus:outline-none border-gray-300 focus:border-blue-500 text-sm sm:text-base transition";
 
   const errorClass = "text-red-500 text-xs mt-1";
 
-  // ================= HELPERS =================
-  const formatPhone = (phone) => phone.replace(/\+/g, ""); // +998 -> 998
+  // ================= TIMER ENGINE =================
+  const startTimer = (seconds = 120) => {
+    const endTime = Date.now() + seconds * 1000;
+    localStorage.setItem("otp_end_time", endTime);
+
+    runTimer();
+  };
+
+  const runTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+
+    timerRef.current = setInterval(() => {
+      const endTime = Number(localStorage.getItem("otp_end_time"));
+      const diff = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+
+      setOtpTimer(diff);
+      localStorage.setItem("otp_timer", diff);
+
+      if (diff <= 0) {
+        clearInterval(timerRef.current);
+      }
+    }, 1000);
+  };
+
+  // ================= RESTORE TIMER ON LOAD =================
+  useEffect(() => {
+    const endTime = Number(localStorage.getItem("otp_end_time"));
+
+    if (endTime) {
+      runTimer();
+    }
+
+    return () => clearInterval(timerRef.current);
+  }, []);
+
+  // ================= SAVE STATE =================
+  useEffect(() => {
+    localStorage.setItem("recovery_step", step);
+  }, [step]);
+
+  useEffect(() => {
+    localStorage.setItem("recovery_form", JSON.stringify(formData));
+  }, [formData]);
+
+  // ================= PHONE =================
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((p) => ({
+      ...p,
+      [name]: value,
+    }));
+  };
 
   // ================= OTP =================
   const handleOtpChange = (e, index) => {
     const value = e.target.value;
     if (!/^\d?$/.test(value)) return;
 
-    const otpArray = formData.smsCode.split("");
-    otpArray[index] = value;
+    const arr = formData.smsCode.split("");
+    arr[index] = value;
 
-    const newOtp = otpArray.join("");
+    const newOtp = arr.join("");
 
-    setFormData((prev) => ({ ...prev, smsCode: newOtp }));
+    setFormData((p) => ({ ...p, smsCode: newOtp }));
 
     if (value && index < otpLength - 1) {
       inputRefs.current[index + 1]?.focus();
@@ -50,154 +131,90 @@ const RecoveryPassword = () => {
   };
 
   const handleKeyDown = (e, index) => {
-    if (e.key === "Backspace" && !formData.smsCode[index] && index > 0) {
+    if (e.key === "Backspace" && !formData.smsCode[index]) {
       inputRefs.current[index - 1]?.focus();
     }
   };
+  const handlePhoneFocus = () => {
+  if (!formData.phone) {
+    setFormData((prev) => ({ ...prev, phone: "+998" }));
+  }
+};
+
+const handlePhoneBlur = () => {
+  if (formData.phone === "+998") {
+    setFormData((prev) => ({ ...prev, phone: "" }));
+  }
+};
 
   const handlePaste = (e) => {
     const paste = e.clipboardData.getData("text").slice(0, otpLength);
     if (!/^\d+$/.test(paste)) return;
 
-    setFormData((prev) => ({ ...prev, smsCode: paste }));
+    setFormData((p) => ({ ...p, smsCode: paste }));
   };
 
-  // ================= INPUT =================
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    if (name === "phone") {
-      const v = value.replace(/\s+/g, "");
-      if (!/^\+?\d*$/.test(v)) return;
-      if (v.length > 13) return;
-
-      setFormData((prev) => ({ ...prev, phone: v }));
-      return;
-    }
-
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handlePhoneFocus = () => {
-    if (!formData.phone) {
-      setFormData((prev) => ({ ...prev, phone: "+998" }));
-    }
-  };
-
-  const handlePhoneBlur = () => {
-    if (formData.phone === "+998") {
-      setFormData((prev) => ({ ...prev, phone: "" }));
-    }
-  };
-
-  // ================= API CALLS =================
-
-  // STEP 1 → SEND OTP
+  // ================= API =================
   const sendOtp = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-
-      const res = await base_url.post("/auth/forgot-password", {
-        phoneNumber: formatPhone(formData.phone),
+      await base_url.post("/auth/forgot-password", {
+        phoneNumber: formData.phone.replace(/\D/g, ""),
       });
 
       setStep(2);
-      setErrors({});
+      startTimer(120);
     } catch (err) {
-      setErrors({
-        phone: err.response?.data?.message || "Xatolik yuz berdi",
-      });
+      setErrors({ phone: "Telefon xato" });
     } finally {
       setLoading(false);
     }
   };
 
-  // STEP 2 → VERIFY OTP
   const verifyOtp = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-
       await base_url.post("/auth/verify-reset-otp", {
-        phoneNumber: formatPhone(formData.phone),
+        phoneNumber: formData.phone.replace(/\D/g, ""),
         otp: formData.smsCode,
       });
 
       setStep(3);
-      setErrors({});
-    } catch (err) {
-      setErrors({
-        smsCode: err.response?.data?.message || "Kod noto‘g‘ri",
-      });
+    } catch {
+      setErrors({ smsCode: "Kod xato" });
     } finally {
       setLoading(false);
     }
   };
 
-  // STEP 3 → RESET PASSWORD
   const resetPassword = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-
       await base_url.post("/auth/reset-password", {
-        phoneNumber: formatPhone(formData.phone),
+        phoneNumber: formData.phone.replace(/\D/g, ""),
         newPassword: formData.newPassword,
       });
 
+      localStorage.removeItem("recovery_step");
+      localStorage.removeItem("recovery_form");
+      localStorage.removeItem("otp_timer");
+      localStorage.removeItem("otp_end_time");
+
       navigate("/login");
-    } catch (err) {
-      setErrors({
-        confirmPassword: err.response?.data?.message || "Xatolik",
-      });
+    } catch {
+      setErrors({ confirmPassword: "Xatolik" });
     } finally {
       setLoading(false);
     }
   };
 
-  // ================= VALIDATION =================
-  const validateStep1 = () => {
-    if (!formData.phone.startsWith("+998") || formData.phone.length !== 13) {
-      setErrors({ phone: "Telefon noto‘g‘ri" });
-      return false;
-    }
-    return true;
-  };
-
-  const validateStep2 = () => {
-    if (formData.smsCode.length !== 6) {
-      setErrors({ smsCode: "6 ta kod kiriting" });
-      return false;
-    }
-    return true;
-  };
-
-  const validateStep3 = () => {
-    if (formData.newPassword.length < 8) {
-      setErrors({ newPassword: "Kamida 8 ta belgi" });
-      return false;
-    }
-
-    if (formData.newPassword !== formData.confirmPassword) {
-      setErrors({ confirmPassword: "Parollar mos emas" });
-      return false;
-    }
-
-    return true;
-  };
-
   // ================= SUBMIT =================
-  const handleSubmit = async () => {
-    if (step === 1) {
-      if (validateStep1()) await sendOtp();
-    }
-
-    if (step === 2) {
-      if (validateStep2()) await verifyOtp();
-    }
-
-    if (step === 3) {
-      if (validateStep3()) await resetPassword();
-    }
+  const handleSubmit = () => {
+    if (step === 1) return sendOtp();
+    if (step === 2) return verifyOtp();
+    if (step === 3) return resetPassword();
   };
+  
 
   // ================= UI (UNCHANGED) =================
   return (
@@ -287,32 +304,74 @@ const RecoveryPassword = () => {
                 {errors.smsCode && (
                   <p className="text-red-500 text-xs mt-2">{errors.smsCode}</p>
                 )}
+                 <p className="text-center text-xs text-blue-600 mt-2">
+                  {otpTimer > 0
+                    ? `Kod amal qilish vaqti: ${Math.floor(otpTimer / 60)}:${(otpTimer % 60)
+                        .toString()
+                        .padStart(2, "0")}`
+                    : "Kod muddati tugagan"}
+                </p>
+
+                {otpTimer === 0 && (
+                  <button
+                    onClick={handleResendOtp}
+                    className="text-blue-600 text-xs mt-2 underline"
+                  >
+                    Yangi kod olish
+                  </button>
+                )}
               </>
             )}
 
             {/* STEP 3 */}
             {step === 3 && (
               <div className="space-y-3">
-                <input
-                  type="password"
-                  name="newPassword"
-                  placeholder="Yangi parol"
-                  onChange={handleChange}
-                  className={`${inputClass} ${errors.newPassword && "border-red-500"}`}
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="newPassword"
+                    onChange={handleChange}
+                    className={inputClass}
+                    placeholder="Yangi parol"
+                  />
+                
+                   <button
+                    type="button"
+                    onClick={() => setShowPassword((p) => !p)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+                </div>
                 {errors.newPassword && (
                   <p className={errorClass}>{errors.newPassword}</p>
                 )}
 
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  placeholder="Parolni takrorlang"
-                  onChange={handleChange}
-                  className={`${inputClass} ${
-                    errors.confirmPassword && "border-red-500"
-                  }`}
-                />
+                <div className="relative mt-3">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    onChange={handleChange}
+                    className={inputClass}
+                    placeholder="Parolni takrorlang"
+                  />
+                
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((p) => !p)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+                </div>
                 {errors.confirmPassword && (
                   <p className={errorClass}>{errors.confirmPassword}</p>
                 )}

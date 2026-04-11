@@ -87,7 +87,7 @@ const Header = () => {
 
   return (
     <>
-      <TestModeBanner />
+      {/* <TestModeBanner /> */}
 
       <header className="w-full py-4 fixed top-0 h-20 z-40 text-white flex backdrop-blur-md bg-[#0A0F1F]/70">
         <nav className="flex container mx-auto px-10 py-5 justify-between items-center">
