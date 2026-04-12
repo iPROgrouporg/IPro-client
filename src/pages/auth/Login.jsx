@@ -4,10 +4,13 @@ import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../assets/icons/Logo.svg";
 import LogoBig from "../../assets/images/iproLogoRegister.png";
 import { authApi } from "../../connection/BaseUrl.js";
+import { Eye, EyeOff } from "lucide-react";
+
 
 const Login = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
+     const [showPassword, setShowPassword] = useState(false);
 
     const [phoneNumber, setPhoneNumber] = useState("+998");
     const [password, setPassword] = useState("");
@@ -161,8 +164,9 @@ const Login = () => {
 
                         {/* PASSWORD */}
                         <div className="mb-3">
+                            <div className="relative">
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder={t("passwordPlaceholder")}
@@ -172,6 +176,18 @@ const Login = () => {
                                         : "border-gray-300 focus:border-blue-500"
                                 }`}
                             />
+                            <button
+                                                  type="button"
+                                                  onClick={() => setShowPassword((p) => !p)}
+                                                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                                >
+                                                  {showPassword ? (
+                                                    <EyeOff size={18} />
+                                                  ) : (
+                                                    <Eye size={18} />
+                                                  )}
+                                                </button>
+                            </div>
                             {errors.password && (
                                 <p className="mt-1 text-sm text-red-500">
                                     {errors.password}

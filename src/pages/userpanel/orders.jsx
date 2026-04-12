@@ -213,7 +213,6 @@ const ServicesPage = () => {
         onChange={handleChange}
       />
 
-      {/* ORDER AMOUNT (ONLY NUMBERS) */}
       <input
         name="orderAmount"
         placeholder="Order amount ($)"

@@ -1,12 +1,47 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
-const OtpStep = ({ phone, onVerify, onBack }) => {
+const OtpStep = ({ phone, onVerify, onBack, onResend }) => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputsRef = useRef([]);
 
-  // =========================
-  // INPUT CHANGE
-  // =========================
+  // ================= TIMER =================
+  const [otpTimer, setOtpTimer] = useState(() => {
+    return Number(localStorage.getItem("otpTimer")) || 120;
+  });
+
+  const timerRef = useRef(null);
+
+  const startTimer = () => {
+    setOtpTimer(120);
+
+    if (timerRef.current) clearInterval(timerRef.current);
+
+    timerRef.current = setInterval(() => {
+      setOtpTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  // ================= INIT =================
+  useEffect(() => {
+    startTimer();
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
+
+  // ================= SAVE TIMER =================
+  useEffect(() => {
+    localStorage.setItem("otpTimer", otpTimer);
+  }, [otpTimer]);
+
+  // ================= INPUT CHANGE =================
   const handleChange = (value, index) => {
     if (!/^\d*$/.test(value)) return;
 
@@ -21,15 +56,12 @@ const OtpStep = ({ phone, onVerify, onBack }) => {
     newOtp[index] = value[value.length - 1];
     setOtp(newOtp);
 
-    // next input
     if (index < 5) {
       inputsRef.current[index + 1]?.focus();
     }
   };
 
-  // =========================
-  // BACKSPACE NAVIGATION
-  // =========================
+  // ================= BACKSPACE =================
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace") {
       if (otp[index]) {
@@ -42,9 +74,7 @@ const OtpStep = ({ phone, onVerify, onBack }) => {
     }
   };
 
-  // =========================
-  // PASTE SUPPORT (PRO FEATURE)
-  // =========================
+  // ================= PASTE =================
   const handlePaste = (e) => {
     e.preventDefault();
 
@@ -63,9 +93,7 @@ const OtpStep = ({ phone, onVerify, onBack }) => {
     inputsRef.current[nextIndex]?.focus();
   };
 
-  // =========================
-  // VERIFY
-  // =========================
+  // ================= VERIFY =================
   const handleSubmit = () => {
     const code = otp.join("");
 
@@ -75,6 +103,13 @@ const OtpStep = ({ phone, onVerify, onBack }) => {
     }
 
     onVerify(code);
+  };
+
+  // ================= RESEND =================
+  const handleResendClick = () => {
+    onResend();   // parent API call
+    startTimer(); // restart timer
+    setOtp(["", "", "", "", "", ""]);
   };
 
   return (
@@ -121,6 +156,25 @@ const OtpStep = ({ phone, onVerify, onBack }) => {
             />
           ))}
         </div>
+
+        {/* ⏱ TIMER */}
+        <p className="text-xs text-blue-400 mt-4">
+          {otpTimer > 0
+            ? `Qolgan vaqt: ${Math.floor(otpTimer / 60)}:${(otpTimer % 60)
+                .toString()
+                .padStart(2, "0")}`
+            : "Kod muddati tugadi"}
+        </p>
+
+        {/* 🔁 RESEND */}
+        {otpTimer === 0 && (
+          <button
+            onClick={handleResendClick}
+            className="text-blue-400 text-xs mt-2 underline"
+          >
+            Yangi kod olish
+          </button>
+        )}
 
         {/* VERIFY BUTTON */}
         <button

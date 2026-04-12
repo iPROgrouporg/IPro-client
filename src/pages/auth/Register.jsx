@@ -7,8 +7,6 @@ import { authApi } from "../../connection/BaseUrl";
 import { Eye, EyeOff } from "lucide-react";
 
 
-
-
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
 const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -303,27 +301,26 @@ const handlePhoneBlur = () => {
                   {errors.phone && <p className={errorClass}>{errors.phone}</p>}
 
                   <div className="relative">
-  <input
-    type={showPassword ? "text" : "password"}
-    name="newPassword"
-    onChange={handleChange}
-    className={inputClass}
-    placeholder="Yangi parol"
-  />
-
-   <button
-    type="button"
-    onClick={() => setShowPassword((p) => !p)}
-    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-  >
-    {showPassword ? (
-      <EyeOff size={18} />
-    ) : (
-      <Eye size={18} />
-    )}
-  </button>
-</div>
-                  {errors.password && <p className={errorClass}>{errors.password}</p>}
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="newPassword"
+                      onChange={handleChange}
+                      className={inputClass}
+                      placeholder="Yangi parol"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((p) => !p)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                
+                  </div>
 
                  <div className="relative mt-3">
   <input

@@ -15,12 +15,10 @@ const RecoveryPassword = () => {
   const inputRefs = useRef([]);
   const timerRef = useRef(null);
 
-  // ================= STEP (PERSIST) =================
   const [step, setStep] = useState(() => {
     return Number(localStorage.getItem("recovery_step")) || 1;
   });
 
-  // ================= FORM (PERSIST) =================
   const [formData, setFormData] = useState(() => {
     return (
       JSON.parse(localStorage.getItem("recovery_form")) || {
