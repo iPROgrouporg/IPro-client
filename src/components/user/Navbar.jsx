@@ -3,11 +3,13 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { FiSettings } from "react-icons/fi";
 import { useEffect, useRef, useState } from "react";
 import { userApi } from "../../connection/BaseUrl";
+import { useTranslation } from "react-i18next";
 
 const Navbar = ({ sidebarOpen, setSidebarOpen, setModalOpen }) => {
   const [user, setUser] = useState(null);
   const [notifOpen, setNotifOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const {t} =useTranslation()
 
   const notifRef = useRef(null);
   const settingsRef = useRef(null);
@@ -160,14 +162,14 @@ const Navbar = ({ sidebarOpen, setSidebarOpen, setModalOpen }) => {
                   }}
                   className="w-full px-4 py-2 text-center bg-blue-600 text-sm rounded-xl mb-2 hover:bg-blue-500"
                 >
-                  Edit Profile
+                  {t('editTitle')}
                 </button>
 
                 <button
                   onClick={handleLogout}
                   className="w-full px-4 py-2 text-center rounded-xl bg-red-700 text-sm hover:bg-red-500"
                 >
-                  Log out
+                  {t('logOut')}
                 </button>
 
               </div>

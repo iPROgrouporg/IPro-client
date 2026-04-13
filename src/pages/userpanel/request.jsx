@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { IoEye } from "react-icons/io5";
 import RequestModal from "../../components/user/RequestModal";
 import { orderApi } from "../../connection/BaseUrl";
+import { useTranslation } from "react-i18next";
 
 const Request = () => {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,13 +53,13 @@ const Request = () => {
 
       {/* HEADER */}
       <div className="flex justify-between mb-6">
-        <h2 className="text-2xl font-semibold">My Requests</h2>
+        <h2 className="text-2xl font-semibold">{t('requestDesc')}</h2>
       </div>
 
       {/* LOADING */}
       {loading ? (
         <div className="text-center py-10 text-white/60">
-          Yuklanmoqda...
+          Loading...
         </div>
       ) : (
         <div className="bg-[#0d1128] border border-white/10 rounded-xl overflow-hidden">
@@ -69,11 +71,11 @@ const Request = () => {
               <thead className="bg-white/5 sticky top-0">
                 <tr className="text-white/70">
                   <th className="p-4 text-left">#</th>
-                  <th className="p-4 text-left">Company</th>
-                  <th className="p-4 text-left">Amount</th>
-                  <th className="p-4 text-left">Deadline</th>
-                  <th className="p-4 text-left">Status</th>
-                  <th className="p-4 text-center">Action</th>
+                  <th className="p-4 text-left">{t('company')}</th>
+                  <th className="p-4 text-left">{t('amount')}</th>
+                  <th className="p-4 text-left">{t('deadline')}</th>
+                  <th className="p-4 text-left">{t('status')}</th>
+                  <th className="p-4 text-center">{t('action')}</th>
                 </tr>
               </thead>
 

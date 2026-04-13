@@ -19,7 +19,7 @@ const UserDashboard = () => {
       if (!token) return;
 
       const res = await axios.get(
-        "https://ipro.javohir-dev.uz/api/auth/getMe",
+        "https://api.iprogroup.org/api/v1/auth/getMe",
         {
           headers: { Authorization: `Bearer ${token}` },
         }

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { orderApi } from "../../../connection/BaseUrl";
+import { useTranslation } from "react-i18next";
 
 export const OrderForms = ({ setShowModal, service }) => {
   const token = localStorage.getItem("token");
+  const {t}=useTranslation()
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -92,7 +94,7 @@ export const OrderForms = ({ setShowModal, service }) => {
             name="companyName"
             value={form.companyName}
             onChange={handleChange}
-            placeholder="Company name"
+            placeholder={t('companyName')}
             className="px-4 py-2 rounded-lg bg-white/5 border border-white/10"
           />
 
@@ -101,13 +103,14 @@ export const OrderForms = ({ setShowModal, service }) => {
             name="orderAmount"
             value={form.orderAmount}
             onChange={handleChange}
-            placeholder="Order amount"
+            placeholder={t('orderAmount')}
             className="px-4 py-2 rounded-lg bg-white/5 border border-white/10"
           />
 
           {/* DEADLINE */}
           <input
-            type="datetime-local"
+            type="text"
+            placeholder={t('deadline')}
             name="deadline"
             value={form.deadline}
             onChange={handleChange}
@@ -122,7 +125,7 @@ export const OrderForms = ({ setShowModal, service }) => {
               checked={form.useCashback}
               onChange={handleChange}
             />
-            Use cashback
+            {t('useCashback')}
           </label>
 
           {/* DESCRIPTION */}
@@ -130,7 +133,7 @@ export const OrderForms = ({ setShowModal, service }) => {
             name="description"
             value={form.description}
             onChange={handleChange}
-            placeholder="Description..."
+            placeholder={t('description')}
             className="sm:col-span-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10"
           />
 
@@ -140,7 +143,7 @@ export const OrderForms = ({ setShowModal, service }) => {
             disabled={loading}
             className="sm:col-span-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 transition"
           >
-            {loading ? "Sending..." : "Create Order"}
+            {loading ? t('sending') : t('submit')}
           </button>
 
         </form>

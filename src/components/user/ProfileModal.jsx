@@ -2,10 +2,12 @@ import { IoClose } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import OtpStep from "./OtpStep";
 import { userApi } from "../../connection/BaseUrl";
+import { useTranslation } from "react-i18next";
 
 const ProfileModal = ({ modalOpen, setModalOpen }) => {
   const [step, setStep] = useState("edit");
   const [initialData, setInitialData] = useState(null);
+  const {t} = useTranslation();
   const [form, setForm] = useState(null);
 const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -130,7 +132,8 @@ const [loading, setLoading] = useState(false);
             {/* HEADER */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
               <h2 className="text-xl font-bold text-white">
-                Edit Profile
+                {t('editTitle')}
+
               </h2>
 
               <button
@@ -152,8 +155,7 @@ const [loading, setLoading] = useState(false);
                 bg-white/5 border border-white/10
                 text-white outline-none
                 focus:border-blue-500 transition"
-                placeholder="First name"
-              />
+placeholder={t("firstName")}              />
 
               {/* LAST NAME */}
               <input
@@ -163,7 +165,7 @@ const [loading, setLoading] = useState(false);
                 bg-white/5 border border-white/10
                 text-white outline-none
                 focus:border-blue-500 transition"
-                placeholder="Last name"
+                placeholder={t("lastName")}
               />
 
               {/* COMPANY */}
@@ -174,7 +176,7 @@ const [loading, setLoading] = useState(false);
                 bg-white/5 border border-white/10
                 text-white outline-none
                 focus:border-blue-500 transition"
-                placeholder="Company"
+                placeholder={t("company")}
               />
 
               {/* PHONE */}
@@ -185,7 +187,7 @@ const [loading, setLoading] = useState(false);
                 bg-white/5 border border-white/10
                 text-white outline-none
                 focus:border-blue-500 transition"
-                placeholder="Phone"
+                placeholder={t("phone")}
               />
 
             </div>
@@ -197,7 +199,7 @@ const [loading, setLoading] = useState(false);
                 onClick={() => setModalOpen(false)}
                 className="px-5 py-2 rounded-xl bg-white/10 text-white"
               >
-                Cancel
+                {t('cancel')}
               </button>
 
               <button
@@ -205,7 +207,7 @@ const [loading, setLoading] = useState(false);
                 disabled={loading}
                 className="px-6 py-2 rounded-xl bg-blue-600 text-white flex items-center justify-center gap-2"
               >
-                {loading ? "Saving..." : "Save"}
+                {loading ? t('saving') : t('save')}
               </button>
 
             </div>

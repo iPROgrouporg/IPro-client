@@ -2,11 +2,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { IoSearch, IoClose, IoSparkles } from "react-icons/io5";
 import { orderApi } from "../../connection/BaseUrl";
+import { useTranslation } from "react-i18next";
 
 const inputStyle =
   "w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.25)] transition";
 
 const ServicesPage = () => {
+  const { t } = useTranslation();
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,7 +31,7 @@ const ServicesPage = () => {
     const fetchServices = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:2025/api/v1/service/all"
+          "https://api.iprogroup.org/api/v1/service/all"
         );
 
         setServices(res.data || []);
@@ -115,10 +117,10 @@ const ServicesPage = () => {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <IoSparkles className="text-blue-400" />
-            Services
+            {t('title')}
           </h1>
           <p className="text-white/50 text-sm mt-1">
-            Choose service and create your order
+            {t('desc')}
           </p>
         </div>
 
@@ -202,7 +204,7 @@ const ServicesPage = () => {
 
               <input
                 name="companyName"
-                placeholder="Company name"
+                placeholder={t('companyName')}
                 className={inputStyle}
                 onChange={handleChange}
                 value={form.companyName}
@@ -210,7 +212,7 @@ const ServicesPage = () => {
 
               <input
                 name="orderAmount"
-                placeholder="Order amount"
+                placeholder={t('orderAmount')}
                 className={inputStyle}
                 onChange={handleChange}
                 value={form.orderAmount}
@@ -218,7 +220,7 @@ const ServicesPage = () => {
 
               <input
                 name="deadline"
-                placeholder="Deadline"
+                placeholder={t('deadline')}
                 className={inputStyle}
                 onChange={handleChange}
                 value={form.deadline}
@@ -226,7 +228,7 @@ const ServicesPage = () => {
 
               <textarea
                 name="description"
-                placeholder="Description"
+                placeholder={t('description')}
                 className={`${inputStyle} col-span-2 h-28`}
                 onChange={handleChange}
                 value={form.description}
@@ -239,7 +241,7 @@ const ServicesPage = () => {
                   onChange={handleChange}
                   checked={form.useCashback}
                 />
-                Use cashback
+                {t('useCashback')}
               </label>
 
             </div>
@@ -251,7 +253,7 @@ const ServicesPage = () => {
                 disabled={orderLoading}
                 className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 transition"
               >
-                {orderLoading ? "Sending..." : "Submit Order"}
+                {orderLoading ? t('sending') : t('submit')}
               </button>
             </div>
 

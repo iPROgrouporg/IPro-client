@@ -1,6 +1,7 @@
 import { FaClipboardList, FaShoppingCart } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/icons/Logo.svg";
+import { useTranslation } from "react-i18next";
 
 const Sidebar = ({
   activePage,
@@ -8,9 +9,10 @@ const Sidebar = ({
   sidebarOpen,
   setSidebarOpen,
 }) => {
+  const { t } = useTranslation();
   const menus = [
-    { key: "orders", icon: <FaShoppingCart />, label: "Orders" },
-    { key: "requests", icon: <FaClipboardList />, label: "Requests" },
+    { key: "orders", icon: <FaShoppingCart />, label: `${t('orders')}` },
+    { key: "requests", icon: <FaClipboardList />, label: `${t('requests')}` },
   ];
 
   return (

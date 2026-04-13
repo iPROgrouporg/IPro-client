@@ -2,7 +2,7 @@
     import {APP_API} from "./AppApi.js";
 
     export const base_url = axios.create({
-        baseURL: "http://localhost:2025/api/v1/",
+        baseURL: "https://api.iprogroup.org/api/v1/",
     });
 
     base_url.interceptors.request.use((config) => {
@@ -15,7 +15,7 @@
         return config;
     });
 
-    export const img_url = "http://localhost:2025/api/v1/files/image/";
+    export const img_url = "https://api.iprogroup.org/api/v1/files/image/";
 
     const api = {
         getAll: (url) => base_url.get(url),
