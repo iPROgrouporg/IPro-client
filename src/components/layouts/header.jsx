@@ -114,14 +114,14 @@ const Header = () => {
           <div className="flex items-center gap-5">
 
             {/* 🪙 CASHBACK (UNCHANGED DESIGN) */}
-            {token && (
+            {/* {token && (
               <div className="flex items-center gap-1 bg-blue-500/20 px-3 py-1 rounded-full">
                 <span className="text-yellow-400">🪙</span>
                 <span className="text-white font-semibold text-sm">
                   {cashback}
                 </span>
               </div>
-            )}
+            )} */}
 
             {/* LANG */}
             <LangDropdown

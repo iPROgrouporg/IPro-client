@@ -1,15 +1,14 @@
 import { useState, useRef, useEffect } from "react";
+import { authApi } from "../../connection/BaseUrl";
 
-const OtpStep = ({ phone, onVerify, onBack, onResend }) => {
+const OtpStep = ({ phone, onVerify, onBack }) => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [loading, setLoading] = useState(false);
+
   const inputsRef = useRef([]);
-
-  // ================= TIMER =================
-  const [otpTimer, setOtpTimer] = useState(() => {
-    return Number(localStorage.getItem("otpTimer")) || 120;
-  });
-
   const timerRef = useRef(null);
+
+  const [otpTimer, setOtpTimer] = useState(120);
 
   const startTimer = () => {
     setOtpTimer(120);
@@ -27,74 +26,40 @@ const OtpStep = ({ phone, onVerify, onBack, onResend }) => {
     }, 1000);
   };
 
-  // ================= INIT =================
   useEffect(() => {
     startTimer();
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
+    return () => clearInterval(timerRef.current);
   }, []);
 
-  // ================= SAVE TIMER =================
-  useEffect(() => {
-    localStorage.setItem("otpTimer", otpTimer);
-  }, [otpTimer]);
-
-  // ================= INPUT CHANGE =================
   const handleChange = (value, index) => {
     if (!/^\d*$/.test(value)) return;
 
     const newOtp = [...otp];
-
-    if (value === "") {
-      newOtp[index] = "";
-      setOtp(newOtp);
-      return;
-    }
-
-    newOtp[index] = value[value.length - 1];
+    newOtp[index] = value.slice(-1);
     setOtp(newOtp);
 
-    if (index < 5) {
+    if (value && index < 5) {
       inputsRef.current[index + 1]?.focus();
     }
   };
 
-  // ================= BACKSPACE =================
   const handleKeyDown = (e, index) => {
-    if (e.key === "Backspace") {
-      if (otp[index]) {
-        const newOtp = [...otp];
-        newOtp[index] = "";
-        setOtp(newOtp);
-      } else if (index > 0) {
-        inputsRef.current[index - 1]?.focus();
-      }
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      inputsRef.current[index - 1]?.focus();
     }
   };
 
-  // ================= PASTE =================
   const handlePaste = (e) => {
     e.preventDefault();
-
     const text = e.clipboardData.getData("text").replace(/\D/g, "");
-    const digits = text.slice(0, 6).split("");
+    const digits = text.split("").slice(0, 6);
 
     const newOtp = [...otp];
-
-    digits.forEach((d, i) => {
-      newOtp[i] = d;
-    });
-
+    digits.forEach((d, i) => (newOtp[i] = d));
     setOtp(newOtp);
-
-    const nextIndex = digits.length < 6 ? digits.length : 5;
-    inputsRef.current[nextIndex]?.focus();
   };
 
-  // ================= VERIFY =================
-  const handleSubmit = () => {
+  const handleVerify = async () => {
     const code = otp.join("");
 
     if (code.length !== 6) {
@@ -102,41 +67,39 @@ const OtpStep = ({ phone, onVerify, onBack, onResend }) => {
       return;
     }
 
-    onVerify(code);
+    setLoading(true);
+    try {
+      await onVerify(code);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // ================= RESEND =================
-  const handleResendClick = () => {
-    onResend();   // parent API call
-    startTimer(); // restart timer
-    setOtp(["", "", "", "", "", ""]);
+  const handleResend = async () => {
+    try {
+      setLoading(true);
+
+      await authApi.resendOtp(phone); // 🔥 FIXED
+
+      setOtp(["", "", "", "", "", ""]);
+      startTimer();
+    } catch (err) {
+      alert("Kod yuborilmadi");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+      <div className="w-full max-w-md bg-[#0b1020] border border-white/10 rounded-2xl p-6 text-center">
 
-      {/* BACKDROP */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-
-      {/* MODAL */}
-      <div className="
-        relative w-full max-w-md
-        bg-[#0b1020]
-        border border-white/10
-        rounded-2xl p-6 text-center
-        shadow-2xl
-      ">
-
-        {/* TITLE */}
-        <h2 className="text-xl font-bold text-white">
-          OTP Verification
-        </h2>
+        <h2 className="text-xl font-bold text-white">OTP Verification</h2>
 
         <p className="text-sm text-white/50 mt-2">
           Code sent to {phone}
         </p>
 
-        {/* OTP INPUTS */}
         <div className="flex justify-between gap-2 mt-6">
           {otp.map((val, i) => (
             <input
@@ -147,51 +110,40 @@ const OtpStep = ({ phone, onVerify, onBack, onResend }) => {
               onKeyDown={(e) => handleKeyDown(e, i)}
               onPaste={handlePaste}
               maxLength={1}
-              className="
-                w-12 h-12 text-center text-xl
-                bg-white/5 border border-white/10
-                rounded-lg text-white outline-none
-                focus:border-blue-500 focus:scale-105 transition
-              "
+              className="w-12 h-12 text-center text-xl bg-white/5 border border-white/10 rounded-lg text-white outline-none"
             />
           ))}
         </div>
 
-        {/* ⏱ TIMER */}
         <p className="text-xs text-blue-400 mt-4">
           {otpTimer > 0
-            ? `Qolgan vaqt: ${Math.floor(otpTimer / 60)}:${(otpTimer % 60)
-                .toString()
-                .padStart(2, "0")}`
-            : "Kod muddati tugadi"}
+            ? `Qolgan vaqt: ${Math.floor(otpTimer / 60)}:${String(
+                otpTimer % 60
+              ).padStart(2, "0")}`
+            : "Kod muddati tugagan"}
         </p>
 
-        {/* 🔁 RESEND */}
         {otpTimer === 0 && (
           <button
-            onClick={handleResendClick}
+            onClick={handleResend}
+            disabled={loading}
             className="text-blue-400 text-xs mt-2 underline"
           >
-            Yangi kod olish
+            {loading ? "Yuborilmoqda..." : "Yangi kod olish"}
           </button>
         )}
 
-        {/* VERIFY BUTTON */}
         <button
-          onClick={handleSubmit}
-          className="
-            mt-6 w-full py-3 rounded-xl
-            bg-blue-600 hover:bg-blue-500
-            text-white font-semibold transition
-          "
+          onClick={handleVerify}
+          disabled={loading}
+          className="mt-6 w-full py-3 rounded-xl bg-blue-600 text-white"
         >
-          Verify OTP
+          {loading ? "Tekshirilmoqda..." : "Verify OTP"}
         </button>
 
-        {/* BACK BUTTON */}
         <button
           onClick={onBack}
-          className="mt-3 text-sm text-white/50 hover:text-white"
+          className="mt-3 text-sm text-white/50"
         >
           Back
         </button>

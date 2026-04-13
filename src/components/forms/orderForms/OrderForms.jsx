@@ -1,169 +1,146 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import { base_url } from "../../../connection/BaseUrl";
+import { orderApi } from "../../../connection/BaseUrl";
 
 export const OrderForms = ({ setShowModal, service }) => {
   const token = localStorage.getItem("token");
 
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const [companyName, setCompanyName] = useState("");
-  const [orderAmount, setOrderAmount] = useState("");
-  const [deadline, setDeadline] = useState("");
-  const [description, setDescription] = useState("");
-  const [useCashback, setUseCashback] = useState(false);
+  const [form, setForm] = useState({
+    companyName: "",
+    orderAmount: "",
+    deadline: "",
+    description: "",
+    useCashback: false,
+  });
 
-  const [errors, setErrors] = useState("");
+  // ================= INPUT =================
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
 
-  // ================= GET USER =================
-  useEffect(() => {
-    if (!token) return;
-
-    base_url
-      .get("/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => setUser(res.data))
-      .catch(() => setUser(null));
-  }, [token]);
-
-  const handleAmount = (e) => {
-    const onlyNums = e.target.value.replace(/\D/g, "");
-    setOrderAmount(onlyNums);
-  };
-
-  // ================= CHECK AUTH =================
-  const canOrder = () => {
-    if (!token) return "Ro‘yxatdan o‘ting";
-    if (!user?.enabled) return "Ro‘yxatdan o‘ting";
-    if (!user?.verified) return "Telefon tasdiqlanmagan";
-    return null;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   // ================= SUBMIT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    const authError = canOrder();
-    if (authError) {
-      setErrors(authError);
-      return;
-    }
-
-    if (!companyName || !orderAmount || !deadline) {
-      setErrors("Barcha maydonlarni to‘ldiring");
-      return;
+    if (!form.companyName || !form.orderAmount || !form.deadline) {
+      return setError("Barcha maydonlarni to‘ldiring");
     }
 
     try {
       setLoading(true);
 
       const payload = {
-        companyName,
-        orderAmount: Number(orderAmount),
-        deadline,
-        description,
-        useCashback,
+        companyName: form.companyName,
+        orderAmount: Number(form.orderAmount),
+        deadline: form.deadline,
+        description: form.description,
+        useCashback: form.useCashback,
       };
 
-      const res = await base_url.post(
-        `/order/${service?.id}`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await orderApi.createOrder(service?.id, payload);
 
       console.log("ORDER SUCCESS:", res.data);
 
       setShowModal(false);
+
     } catch (err) {
-      setErrors(
-        err.response?.data?.message || "Order yuborishda xatolik"
-      );
+      console.log(err);
+      setError(err.response?.data?.message || "Order yuborishda xatolik");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
 
-      <div className="relative w-full max-w-2xl rounded-2xl bg-gradient-to-br from-[#1E2238]/90 to-[#0F172A]/90 p-6 text-white">
+      <div className="relative w-full max-w-2xl rounded-2xl bg-[#0f172a] text-white shadow-2xl">
 
-        {/* CLOSE */}
-        <button
-          onClick={() => setShowModal(false)}
-          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/5"
-        >
-          <IoMdClose size={24} />
-        </button>
+        {/* HEADER */}
+        <div className="flex justify-between items-center p-5 border-b border-white/10">
+          <h2 className="text-xl font-bold">
+            {service?.title || "Buyurtma berish"}
+          </h2>
 
-        <h2 className="text-2xl font-bold text-center mb-6">
-          Buyurtma berish
-        </h2>
+          <button onClick={() => setShowModal(false)}>
+            <IoMdClose size={24} />
+          </button>
+        </div>
 
-        {/* ERROR MESSAGE */}
-        {errors && (
-          <p className="text-center text-red-500 mb-3">{errors}</p>
+        {/* ERROR */}
+        {error && (
+          <p className="text-center text-red-400 mt-3">{error}</p>
         )}
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        {/* FORM */}
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-5"
+        >
 
           {/* COMPANY */}
           <input
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            placeholder="Kompaniya nomi"
+            name="companyName"
+            value={form.companyName}
+            onChange={handleChange}
+            placeholder="Company name"
             className="px-4 py-2 rounded-lg bg-white/5 border border-white/10"
           />
 
           {/* AMOUNT */}
           <input
-            value={orderAmount}
-            onChange={handleAmount}
-            placeholder="Narx"
+            name="orderAmount"
+            value={form.orderAmount}
+            onChange={handleChange}
+            placeholder="Order amount"
             className="px-4 py-2 rounded-lg bg-white/5 border border-white/10"
           />
 
           {/* DEADLINE */}
           <input
-            type="date"
-            value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
+            type="datetime-local"
+            name="deadline"
+            value={form.deadline}
+            onChange={handleChange}
             className="px-4 py-2 rounded-lg bg-white/5 border border-white/10"
           />
 
           {/* CASHBACK */}
-          <div className="flex items-center gap-3">
+          <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"
-              checked={useCashback}
-              onChange={(e) => setUseCashback(e.target.checked)}
+              name="useCashback"
+              checked={form.useCashback}
+              onChange={handleChange}
             />
-            <label>Cashback ishlatish</label>
-          </div>
+            Use cashback
+          </label>
 
           {/* DESCRIPTION */}
           <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Izoh"
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            placeholder="Description..."
             className="sm:col-span-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10"
           />
 
-          {/* SUBMIT */}
+          {/* BUTTON */}
           <button
             type="submit"
             disabled={loading}
-            className="sm:col-span-2 py-3 bg-blue-600 rounded-xl"
+            className="sm:col-span-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 transition"
           >
-            {loading ? "Yuborilmoqda..." : "Buyurtma berish"}
+            {loading ? "Sending..." : "Create Order"}
           </button>
 
         </form>

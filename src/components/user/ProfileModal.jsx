@@ -1,66 +1,122 @@
 import { IoClose } from "react-icons/io5";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OtpStep from "./OtpStep";
+import { userApi } from "../../connection/BaseUrl";
 
 const ProfileModal = ({ modalOpen, setModalOpen }) => {
-  const [step, setStep] = useState("edit"); // edit | otp
-  const [phone, setPhone] = useState("+998");
+  const [step, setStep] = useState("edit");
+  const [initialData, setInitialData] = useState(null);
+  const [form, setForm] = useState(null);
+const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (!modalOpen) return;
 
-  if (!modalOpen) return null;
+    const fetchUser = async () => {
+      const res = await userApi.getMe();
+      const data = res.data;
 
-  // =========================
-  // PHONE FORMAT (+998 + 9 digits)
-  // =========================
-  const handleChange = (e) => {
-    let value = e.target.value;
+      const splitName = data.fullName?.split(" ") || [];
 
-    if (!value.startsWith("+998")) {
-      value = "+998";
+      const formatted = {
+        firstName: splitName[0] || "",
+        lastName: splitName[1] || "",
+        company: data.companyName || "",
+        phone: data.phoneNumber,
+      };
+
+      setInitialData(formatted);
+      setForm(formatted);
+    };
+
+    fetchUser();
+  }, [modalOpen]);
+
+  if (!modalOpen || !form) return null;
+
+  const handleInput = (field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const normalizePhone = (p) => p.replace(/\D/g, "");
+
+  const getChangedFields = () => {
+    const changed = {};
+
+    if (
+      form.firstName !== initialData.firstName ||
+      form.lastName !== initialData.lastName
+    ) {
+      changed.fullName = `${form.firstName} ${form.lastName}`;
     }
 
-    let digits = value.replace(/\D/g, "").slice(3);
-    digits = digits.slice(0, 9);
+    if (form.company !== initialData.company) {
+      changed.companyName = form.company;
+    }
 
-    setPhone("+998" + digits);
+    if (
+      normalizePhone(form.phone) !== normalizePhone(initialData.phone)
+    ) {
+      changed.phoneNumber = normalizePhone(form.phone);
+    }
+
+    return changed;
   };
 
-  // =========================
-  // SEND OTP (FAKE)
-  // =========================
-  const handleSendOtp = () => {
-    console.log("OTP SEND TO:", phone);
-    setStep("otp");
+  const handleSave = async () => {
+    const changedData = getChangedFields();
+
+    if (Object.keys(changedData).length === 0) {
+      alert("Hech narsa o‘zgarmagan");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await userApi.update(changedData);
+
+      // 🔥 faqat phone change bo‘lsa OTP
+      if (changedData.phoneNumber) {
+        setStep("otp");
+        return;
+      }
+
+      alert("Profile updated");
+      setModalOpen(false);
+    } catch (err) {
+      console.log(err);
+    }finally{
+      setLoading(false)
+    }
   };
 
-  // =========================
-  // VERIFY OTP
-  // =========================
-  const handleVerify = (code) => {
-    console.log("OTP:", code);
+  const handleVerify = async (code) => {
+    try {
+      await userApi.verifyUpdateOtp({ otp: code });
 
-    alert("Profile updated successfully!");
-    setModalOpen(false);
-    setStep("edit");
+      alert("Profile updated successfully!");
+      setModalOpen(false);
+      setStep("edit");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
     <>
       {step === "otp" ? (
         <OtpStep
-          phone={phone}
+          phone={form.phone}
           onVerify={handleVerify}
           onBack={() => setStep("edit")}
         />
       ) : (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
 
-          {/* BACKDROP */}
           <div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/70"
             onClick={() => setModalOpen(false)}
           />
 
-          {/* MODAL */}
           <div className="
             relative w-full max-w-3xl mx-4
             rounded-3xl
@@ -71,100 +127,85 @@ const ProfileModal = ({ modalOpen, setModalOpen }) => {
             overflow-hidden
           ">
 
-            {/* ================= HEADER ================= */}
+            {/* HEADER */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
-              <div>
-                <h2 className="text-xl font-bold text-white">
-                  Edit Profile
-                </h2>
-                <p className="text-xs text-white/50 mt-1">
-                  Update your account information securely
-                </p>
-              </div>
+              <h2 className="text-xl font-bold text-white">
+                Edit Profile
+              </h2>
 
               <button
                 onClick={() => setModalOpen(false)}
-                className="p-2 rounded-full hover:bg-white/10 transition"
+                className="p-2 rounded-full hover:bg-white/10"
               >
                 <IoClose className="text-2xl text-white" />
               </button>
             </div>
 
-            {/* ================= BODY ================= */}
+            {/* BODY */}
             <div className="p-6 grid md:grid-cols-2 gap-5">
 
               {/* FIRST NAME */}
-              <div>
-                <label className="text-xs text-white/60">First name</label>
-                <input
-                  placeholder="Enter your first name"
-                  className="w-full mt-2 px-4 py-3 rounded-xl
-                  bg-white/5 border border-white/10
-                  text-white outline-none
-                  focus:border-blue-500 transition"
-                />
-              </div>
+              <input
+                value={form.firstName}
+                onChange={(e) => handleInput("firstName", e.target.value)}
+                className="w-full mt-2 px-4 py-3 rounded-xl
+                bg-white/5 border border-white/10
+                text-white outline-none
+                focus:border-blue-500 transition"
+                placeholder="First name"
+              />
 
               {/* LAST NAME */}
-              <div>
-                <label className="text-xs text-white/60">Last name</label>
-                <input
-                  placeholder="Enter last name"
-                  className="w-full mt-2 px-4 py-3 rounded-xl
-                  bg-white/5 border border-white/10
-                  text-white outline-none
-                  focus:border-blue-500 transition"
-                />
-              </div>
+              <input
+                value={form.lastName}
+                onChange={(e) => handleInput("lastName", e.target.value)}
+                className="w-full mt-2 px-4 py-3 rounded-xl
+                bg-white/5 border border-white/10
+                text-white outline-none
+                focus:border-blue-500 transition"
+                placeholder="Last name"
+              />
 
               {/* COMPANY */}
-              <div>
-                <label className="text-xs text-white/60">Company</label>
-                <input
-                  placeholder="Enter company name"
-                  className="w-full mt-2 px-4 py-3 rounded-xl
-                  bg-white/5 border border-white/10
-                  text-white outline-none
-                  focus:border-blue-500 transition"
-                />
-              </div>
+              <input
+                value={form.company}
+                onChange={(e) => handleInput("company", e.target.value)}
+                className="w-full mt-2 px-4 py-3 rounded-xl
+                bg-white/5 border border-white/10
+                text-white outline-none
+                focus:border-blue-500 transition"
+                placeholder="Company"
+              />
 
               {/* PHONE */}
-              <div>
-                <label className="text-xs text-white/60">Phone number</label>
-                <input
-                  value={phone}
-                  onChange={handleChange}
-                  className="w-full mt-2 px-4 py-3 rounded-xl
-                  bg-white/5 border border-white/10
-                  text-white outline-none
-                  focus:border-blue-500 transition"
-                />
-              </div>
+              <input
+                value={form.phone}
+                onChange={(e) => handleInput("phone", e.target.value)}
+                className="w-full mt-2 px-4 py-3 rounded-xl
+                bg-white/5 border border-white/10
+                text-white outline-none
+                focus:border-blue-500 transition"
+                placeholder="Phone"
+              />
+
             </div>
 
-            {/* ================= FOOTER ================= */}
-            <div className="px-6 py-5 border-t border-white/10 flex gap-3 justify-end">
+            {/* FOOTER */}
+            <div className="px-6 py-5 border-t border-white/10 flex justify-end gap-3">
 
               <button
                 onClick={() => setModalOpen(false)}
-                className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition text-white"
+                className="px-5 py-2 rounded-xl bg-white/10 text-white"
               >
                 Cancel
               </button>
 
               <button
-                onClick={handleSendOtp}
-                className="
-                  px-6 py-2.5 rounded-xl
-                  bg-gradient-to-r from-blue-600 to-blue-500
-                  hover:from-blue-500 hover:to-blue-400
-                  text-white font-semibold
-                  shadow-lg shadow-blue-500/20
-                  transition
-                "
+                onClick={handleSave}
+                disabled={loading}
+                className="px-6 py-2 rounded-xl bg-blue-600 text-white flex items-center justify-center gap-2"
               >
-                Save & Send OTP
+                {loading ? "Saving..." : "Save"}
               </button>
 
             </div>

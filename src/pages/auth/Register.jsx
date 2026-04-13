@@ -81,20 +81,20 @@ const handlePhoneBlur = () => {
   };
 
   // ================= RESEND =================
-  const handleResendOtp = async () => {
-    const phone = formData.phone.replace(/\D/g, "");
+const handleResendOtp = async () => {
+  const phone = formData.phone.replace(/\D/g, "");
 
-    try {
-      const res = await authApi.resendOtp(phone);
+  try {
+    const res = await authApi.resendOtp(phone);
 
-      if (res.data?.success) {
-        setFormData((p) => ({ ...p, smsCode: "" }));
-        startOtpTimer();
-      }
-    } catch (err) {
-      setErrors({ smsCode: "Server error" });
+    if (res.data) {
+      setFormData((p) => ({ ...p, smsCode: "" }));
+      startOtpTimer(); // restart timer
     }
-  };
+  } catch (err) {
+    setErrors({ smsCode: "OTP yuborilmadi" });
+  }
+};;
 
   // ================= INPUT =================
   const handleChange = (e) => {
@@ -137,20 +137,23 @@ const handlePhoneBlur = () => {
 
   // ================= VALIDATE =================
   const validateStep1 = () => {
-    const err = {};
-    const phone = formData.phone.replace(/\D/g, "");
+  const err = {};
+  const phone = formData.phone.replace(/\D/g, "");
 
-    if (formData.firstName.length < 3) err.firstName = "Ism 3 ta harf";
-    if (formData.lastName.length < 3) err.lastName = "Familiya 3 ta harf";
-    if (!phone.startsWith("998") || phone.length !== 12)
-      err.phone = "Telefon noto‘g‘ri";
-    if (formData.password.length < 8) err.password = "Parol 8 ta";
-    if (formData.password !== formData.confirmPassword)
-      err.confirmPassword = "Parollar mos emas";
+  if (formData.firstName.length < 3) err.firstName = "Ism 3 ta harf";
+  if (formData.lastName.length < 3) err.lastName = "Familiya 3 ta harf";
+  if (!phone.startsWith("998") || phone.length !== 12)
+    err.phone = "Telefon noto‘g‘ri";
 
-    setErrors(err);
-    return Object.keys(err).length === 0;
-  };
+  if (formData.password.length < 8)
+    err.password = "Parol 8 ta belgidan kam bo‘lmasin";
+
+  if (formData.password !== formData.confirmPassword)
+    err.confirmPassword = "Parollar mos emas";
+
+  setErrors(err);
+  return Object.keys(err).length === 0;
+};
 
   const validateStep2 = () => {
     const err = {};
@@ -301,31 +304,29 @@ const handlePhoneBlur = () => {
                   {errors.phone && <p className={errorClass}>{errors.phone}</p>}
 
                   <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      name="newPassword"
-                      onChange={handleChange}
-                      className={inputClass}
-                      placeholder="Yangi parol"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((p) => !p)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                    >
-                      {showPassword ? (
-                        <EyeOff size={18} />
-                      ) : (
-                        <Eye size={18} />
-                      )}
-                    </button>
-                
-                  </div>
+  <input
+    type={showPassword ? "text" : "password"}
+    name="password"
+    value={formData.password}
+    onChange={handleChange}
+    className={inputClass}
+    placeholder="Yangi parol"
+  />
 
-                 <div className="relative mt-3">
+  <button
+    type="button"
+    onClick={() => setShowPassword((p) => !p)}
+    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+  >
+    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+  </button>
+</div>
+
+<div className="relative mt-3">
   <input
     type={showConfirmPassword ? "text" : "password"}
     name="confirmPassword"
+    value={formData.confirmPassword}
     onChange={handleChange}
     className={inputClass}
     placeholder="Parolni takrorlang"
@@ -336,13 +337,11 @@ const handlePhoneBlur = () => {
     onClick={() => setShowConfirmPassword((p) => !p)}
     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
   >
-    {showConfirmPassword ? (
-      <EyeOff size={18} />
-    ) : (
-      <Eye size={18} />
-    )}
+    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
   </button>
 </div>
+
+                
                   {errors.confirmPassword && <p className={errorClass}>{errors.confirmPassword}</p>}
                 </div>
               </div>
@@ -377,12 +376,17 @@ const handlePhoneBlur = () => {
                 </p>
 
                 {otpTimer === 0 && (
-                  <button
-                    onClick={handleResendOtp}
-                    className="text-blue-600 text-xs mt-2 underline"
-                  >
-                    Yangi kod olish
-                  </button>
+                 <button
+  onClick={handleResendOtp}
+  disabled={otpTimer > 0}
+  className={`text-xs mt-2 underline ${
+    otpTimer > 0 ? "text-gray-400" : "text-blue-600"
+  }`}
+>
+  {otpTimer > 0
+    ? `Qayta yuborish ${otpTimer}s`
+    : "Yangi kod olish"}
+</button>
                 )}
               </>
             )}

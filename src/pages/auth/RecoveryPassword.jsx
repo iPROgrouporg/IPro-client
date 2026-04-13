@@ -30,19 +30,24 @@ const RecoveryPassword = () => {
     );
   });
   const handleResendOtp = async () => {
-      const phone = formData.phone.replace(/\D/g, "");
-  
-      try {
-        const res = await authApi.resendOtp(phone);
-  
-        if (res.data?.success) {
-          setFormData((p) => ({ ...p, smsCode: "" }));
-          startOtpTimer();
-        }
-      } catch (err) {
-        setErrors({ smsCode: "Server error" });
-      }
-    };
+  const phone = formData.phone.replace(/\D/g, "");
+
+  try {
+    const res = await authApi.resendOtp(phone);
+
+    console.log("RESEND OTP RESPONSE:", res.data);
+
+    if (res.status === 200) {
+      setFormData((p) => ({ ...p, smsCode: "" }));
+      startOtpTimer(); // timer restart
+    } else {
+      setErrors({ smsCode: "OTP yuborilmadi" });
+    }
+  } catch (err) {
+    console.log(err);
+    setErrors({ smsCode: "Server xatolik" });
+  }
+};
 
   // ================= TIMER (FIXED) =================
   const [otpTimer, setOtpTimer] = useState(() => {
