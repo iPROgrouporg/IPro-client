@@ -9,6 +9,7 @@ const inputStyle =
 
 const ServicesPage = () => {
   const { t } = useTranslation();
+
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -17,6 +18,9 @@ const ServicesPage = () => {
   const [selectedService, setSelectedService] = useState(null);
 
   const [orderLoading, setOrderLoading] = useState(false);
+
+  // 🔥 NEW: cashback state
+  const [cashback, setCashback] = useState(0);
 
   const [form, setForm] = useState({
     companyName: "",
@@ -33,7 +37,6 @@ const ServicesPage = () => {
         const res = await axios.get(
           "https://api.iprogroup.org/api/v1/service/all"
         );
-
         setServices(res.data || []);
       } catch (err) {
         console.log(err);
@@ -45,6 +48,19 @@ const ServicesPage = () => {
     fetchServices();
   }, []);
 
+  // 🔥 NEW: GET USER CASHBACK
+  useEffect(() => {
+    const getCashback = async () => {
+      try {
+        const res = await axios.get("/api/user/me"); // o‘zingni endpoint
+        setCashback(res.data?.cashback || 0);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getCashback();
+  }, []);
 
   // ===================== FILTER =====================
   const filtered = useMemo(() => {
@@ -67,46 +83,52 @@ const ServicesPage = () => {
     }));
   };
 
+  // 🔥 NEW: CALCULATION
+  const cashbackUsed = form.useCashback
+    ? Math.min(Number(form.orderAmount || 0), cashback)
+    : 0;
+
+  const remaining =
+    Number(form.orderAmount || 0) - cashbackUsed;
+
   // ===================== CREATE ORDER API =====================
- const handleSubmitOrder = async () => {
-  if (!selectedService?.id) return;
+  const handleSubmitOrder = async () => {
+    if (!selectedService?.id) return;
 
-  setOrderLoading(true);
+    setOrderLoading(true);
 
-  try {
-    const payload = {
-      companyName: form.companyName,
-      orderAmount: Number(form.orderAmount),
+    try {
+      const payload = {
+        companyName: form.companyName,
+        orderAmount: Number(form.orderAmount),
+        deadline: new Date().toISOString(),
+        description: form.description,
+        useCashback: Boolean(form.useCashback),
+      };
 
-      // 🔥 FIX: LocalDateTime uchun to‘g‘ri format
-      deadline: new Date().toISOString(),
+      const res = await orderApi.createOrder(
+        selectedService.id,
+        payload
+      );
 
-      description: form.description,
-      useCashback: Boolean(form.useCashback),
-    };
+      if (res.data) {
+        setOpenModal(false);
+        setSelectedService(null);
 
-    const res = await orderApi.createOrder(selectedService.id, payload);
-
-    console.log("ORDER RESPONSE:", res.data);
-
-    if (res.data) {
-      setOpenModal(false);
-      setSelectedService(null);
-
-      setForm({
-        companyName: "",
-        orderAmount: "",
-        deadline: "",
-        description: "",
-        useCashback: false,
-      });
+        setForm({
+          companyName: "",
+          orderAmount: "",
+          deadline: "",
+          description: "",
+          useCashback: false,
+        });
+      }
+    } catch (err) {
+      console.log("ORDER ERROR:", err?.response?.data || err.message);
+    } finally {
+      setOrderLoading(false);
     }
-  } catch (err) {
-    console.log("ORDER ERROR:", err?.response?.data || err.message);
-  } finally {
-    setOrderLoading(false);
-  }
-};
+  };
 
   return (
     <div className=" bg-[#0A0F1F] text-white p-6 sm:p-10">
@@ -117,10 +139,10 @@ const ServicesPage = () => {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <IoSparkles className="text-blue-400" />
-            {t('title')}
+            {t("title")}
           </h1>
           <p className="text-white/50 text-sm mt-1">
-            {t('desc')}
+            {t("desc")}
           </p>
         </div>
 
@@ -135,32 +157,13 @@ const ServicesPage = () => {
         </div>
       </div>
 
-      {/* LOADING */}
-      {loading && (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div
-              key={i}
-              className="h-44 rounded-2xl bg-white/5 animate-pulse"
-            />
-          ))}
-        </div>
-      )}
-
       {/* SERVICES */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filtered.map((s) => (
           <div
             key={s.id}
             onClick={() => openOrder(s)}
-            className="
-              group cursor-pointer p-6 rounded-2xl
-              bg-gradient-to-b from-white/5 to-white/0
-              border border-white/10
-              hover:border-blue-500
-              hover:scale-[1.02]
-              transition-all duration-300
-            "
+            className="group cursor-pointer p-6 rounded-2xl bg-gradient-to-b from-white/5 to-white/0 border border-white/10 hover:border-blue-500 hover:scale-[1.02] transition-all duration-300"
           >
             <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-500/20 text-blue-400 mb-4">
               <IoSparkles />
@@ -204,7 +207,7 @@ const ServicesPage = () => {
 
               <input
                 name="companyName"
-                placeholder={t('companyName')}
+                placeholder={t("companyName")}
                 className={inputStyle}
                 onChange={handleChange}
                 value={form.companyName}
@@ -212,7 +215,7 @@ const ServicesPage = () => {
 
               <input
                 name="orderAmount"
-                placeholder={t('orderAmount')}
+                placeholder={t("orderAmount")}
                 className={inputStyle}
                 onChange={handleChange}
                 value={form.orderAmount}
@@ -220,7 +223,7 @@ const ServicesPage = () => {
 
               <input
                 name="deadline"
-                placeholder={t('deadline')}
+                placeholder={t("deadline")}
                 className={inputStyle}
                 onChange={handleChange}
                 value={form.deadline}
@@ -228,12 +231,13 @@ const ServicesPage = () => {
 
               <textarea
                 name="description"
-                placeholder={t('description')}
+                placeholder={t("description")}
                 className={`${inputStyle} col-span-2 h-28`}
                 onChange={handleChange}
                 value={form.description}
               />
 
+              {/* 🔥 CASHBACK */}
               <label className="col-span-2 flex items-center gap-3 text-sm">
                 <input
                   type="checkbox"
@@ -241,9 +245,27 @@ const ServicesPage = () => {
                   onChange={handleChange}
                   checked={form.useCashback}
                 />
-                {t('useCashback')}
+                {t("useCashback")} ({cashback}$)
               </label>
 
+              {/* 🔥 CALC INFO */}
+              {form.useCashback && (
+                <div className="col-span-2 text-sm space-y-1">
+                  <p className="text-green-400">
+                    Cashback ishlatiladi: {cashbackUsed}$
+                  </p>
+
+                  <p className="text-yellow-400">
+                    Qolgan to‘lov: {remaining}$
+                  </p>
+
+                  {cashback < Number(form.orderAmount) && (
+                    <p className="text-yellow-500">
+                      Cashback yetarli emas, qolgan summa oddiy to‘lanadi
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* BUTTON */}
@@ -253,7 +275,7 @@ const ServicesPage = () => {
                 disabled={orderLoading}
                 className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 transition"
               >
-                {orderLoading ? t('sending') : t('submit')}
+                {orderLoading ? t("sending") : t("submit")}
               </button>
             </div>
 

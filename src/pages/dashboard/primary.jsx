@@ -1,13 +1,11 @@
-"use client";
-
 import {useState, useEffect} from "react";
 import {motion} from "framer-motion";
-
+import { useNavigate } from "react-router-dom";
 
 
 const Primary = ({t}) => {
     const [current, setCurrent] = useState(0);
-
+const navigate = useNavigate();
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrent((prev) => (prev + 1) % slides.length);
@@ -21,21 +19,26 @@ const Primary = ({t}) => {
         title: `${t("slideTitle1")}`,
         description: `${t("slideDesc1")}`,
         button: `${t("slideButton1")}`,
+        link:'/aboutus'
+        
     },
     {
         title: `${t("slideTitle2")}`,
         description: `${t("slideDesc2")}`,
         button: `${t("slideButton2")}`,
+        link:'/services'
     },
     {
         title: `${t("slideTitle3")}`,
         description: `${t("slideDesc3")}`,
         button: `${t("slideButton3")}`,
+        link:'/portfolio'
     },
     {
         title: `${t("slideTitle4")}`,
         description: `${t("slideDesc4")}`,
         button: `${t("slideButton4")}`,
+        link:'/aboutus'
     },
 ];
 
@@ -71,6 +74,7 @@ const Primary = ({t}) => {
                             {slide.description}
                         </motion.p>
                         <motion.button
+                            onClick={() => navigate(slide.link)}
                             initial={{opacity: 0, y: 20}}
                             animate={{opacity: 1, y: 0}}
                             transition={{delay: 0.8}}

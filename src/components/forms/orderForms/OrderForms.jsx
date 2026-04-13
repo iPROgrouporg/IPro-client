@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { orderApi } from "../../../connection/BaseUrl";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
 
 export const OrderForms = ({ setShowModal, service }) => {
-  const token = localStorage.getItem("token");
-  const {t}=useTranslation()
+  const { t } = useTranslation();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // 🔥 NEW: cashback state
+  const [cashback, setCashback] = useState(0);
 
   const [form, setForm] = useState({
     companyName: "",
@@ -17,6 +20,20 @@ export const OrderForms = ({ setShowModal, service }) => {
     description: "",
     useCashback: false,
   });
+
+  // ================= GET CASHBACK =================
+  useEffect(() => {
+    const getCashback = async () => {
+      try {
+        const res = await axios.get("/api/user/me"); // o‘zingni endpoint
+        setCashback(res.data?.cashback || 0);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getCashback();
+  }, []);
 
   // ================= INPUT =================
   const handleChange = (e) => {
@@ -27,6 +44,14 @@ export const OrderForms = ({ setShowModal, service }) => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+
+  // 🔥 NEW: CALCULATION
+  const cashbackUsed = form.useCashback
+    ? Math.min(Number(form.orderAmount || 0), cashback)
+    : 0;
+
+  const remaining =
+    Number(form.orderAmount || 0) - cashbackUsed;
 
   // ================= SUBMIT =================
   const handleSubmit = async (e) => {
@@ -94,7 +119,7 @@ export const OrderForms = ({ setShowModal, service }) => {
             name="companyName"
             value={form.companyName}
             onChange={handleChange}
-            placeholder={t('companyName')}
+            placeholder={t("companyName")}
             className="px-4 py-2 rounded-lg bg-white/5 border border-white/10"
           />
 
@@ -103,14 +128,14 @@ export const OrderForms = ({ setShowModal, service }) => {
             name="orderAmount"
             value={form.orderAmount}
             onChange={handleChange}
-            placeholder={t('orderAmount')}
+            placeholder={t("orderAmount")}
             className="px-4 py-2 rounded-lg bg-white/5 border border-white/10"
           />
 
           {/* DEADLINE */}
           <input
             type="text"
-            placeholder={t('deadline')}
+            placeholder={t("deadline")}
             name="deadline"
             value={form.deadline}
             onChange={handleChange}
@@ -125,15 +150,34 @@ export const OrderForms = ({ setShowModal, service }) => {
               checked={form.useCashback}
               onChange={handleChange}
             />
-            {t('useCashback')}
+            {t("useCashback")} ({cashback}$)
           </label>
+
+          {/* 🔥 CASHBACK INFO */}
+          {form.useCashback && (
+            <div className="sm:col-span-2 text-sm space-y-1">
+              <p className="text-green-400">
+                Cashback ishlatiladi: {cashbackUsed}$
+              </p>
+
+              <p className="text-yellow-400">
+                Qolgan to‘lov: {remaining}$
+              </p>
+
+              {cashback < Number(form.orderAmount) && (
+                <p className="text-yellow-500">
+                  Cashback yetarli emas, qolgan summa oddiy to‘lanadi
+                </p>
+              )}
+            </div>
+          )}
 
           {/* DESCRIPTION */}
           <textarea
             name="description"
             value={form.description}
             onChange={handleChange}
-            placeholder={t('description')}
+            placeholder={t("description")}
             className="sm:col-span-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10"
           />
 
@@ -143,7 +187,7 @@ export const OrderForms = ({ setShowModal, service }) => {
             disabled={loading}
             className="sm:col-span-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 transition"
           >
-            {loading ? t('sending') : t('submit')}
+            {loading ? t("sending") : t("submit")}
           </button>
 
         </form>

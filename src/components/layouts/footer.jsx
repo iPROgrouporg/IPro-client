@@ -30,8 +30,7 @@ const Footer = () => {
 
           <p className="text-sm text-gray-400 leading-relaxed 
           max-w-xs mx-auto sm:mx-0">
-            {t("footer_description") ||
-              "Professional IT solutions for your business needs. Innovate with iPro."}
+              Professional IT solutions for your business needs. Innovate with iPro.
           </p>
 
           <p className="text-xs text-gray-500">
@@ -51,7 +50,7 @@ const Footer = () => {
               { name: t("team"), path: "/team" },
               { name: t("portfolio"), path: "/portfolio" },
               { name: t("services"), path: "/services" },
-              { name: t("careers"), path: "/careers" },
+              { name: t("careers"), path: "/vacancy" },
             ].map((item, i) => (
               <li key={i}>
                 <NavLink
@@ -77,10 +76,29 @@ const Footer = () => {
           </h3>
 
           <ul className="text-gray-300 space-y-2 text-sm mt-3 sm:mt-6">
-            <li>{t("google_map")}</li>
-            <li>{t("yandex_map")}</li>
+            <li >
+  <a
+    href="https://www.google.com/maps?q=41.289208,69.225914"
+    target="_blank"
+    className="text-sm"
+    rel="noopener noreferrer"
+  >
+    {t("google_map")}
+  </a>
+</li>
+
+<li>
+  <a
+    href="https://yandex.uz/maps/?ll=69.225914%2C41.289208&z=17"
+    target="_blank"
+    className="text-sm"
+    rel="noopener noreferrer"
+  >
+    {t("yandex_map")}
+  </a>
+</li>
             <li className="font-medium text-white/90">
-              +998 90 000 00 00
+              +998 93 553 33 52
             </li>
           </ul>
         </div>
