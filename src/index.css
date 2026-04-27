@@ -1,8 +1,8 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; */
 
-* {
+/* * {
     padding: 0;
     bottom: 0;
     box-sizing: border-box;
@@ -20,16 +20,15 @@ a {
 }
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
-}
+} */
 
-.scrollbar-hide {
-    -ms-overflow-style: none;  /* IE, Edge */
-    scrollbar-width: none;     /* Firefox */
-}
+/* .scrollbar-hide {
+    -ms-overflow-style: none; 
+    scrollbar-width: none;    
+} */
 
 
-/* //////////////////////////////////////// */
-@keyframes marquee {
+/* @keyframes marquee {
     from {
         transform: translateX(100%);
     }
@@ -37,26 +36,25 @@ a {
     to {
         transform: translateX(-100%);
     }
-}
+} */
 
-.marquee {
+/* .marquee {
     display: flex;
     animation: marquee 100s linear infinite;
-}
+} */
 
 /* //////////////////////////////////////// */
-.loader {
+/* .loader {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     background: #121212;
     position: relative;
-    /* <--- bu yerda */
-}
+} */
 
 
-.central {
+/* .central {
     width: 10em;
     height: 10em;
     border-radius: 50%;
@@ -64,10 +62,10 @@ a {
         -0.5em 0.5em 1em blue,
         0.5em -0.5em 1em purple,
         -0.5em -0.5em 1em cyan;
-}
+} */
 
-.external-shadow {
-    width: 10em;
+/* .external-shadow { */
+    /* width: 10em;
     height: 10em;
     border-radius: 50%;
     display: flex;
@@ -79,9 +77,9 @@ a {
         -0.5em 0.5em 3em blue,
         0.5em -0.5em 3em purple,
         -0.5em -0.5em 3em cyan;
-}
+} */
 
-.intern {
+/* .intern {
     position: absolute;
     top: 65%;
     left: 50%;
@@ -105,10 +103,10 @@ a {
     100% {
         transform: rotate(360deg);
     }
-}
+} */
 
 /* //////////////////////////////////////// */
-@layer utilities {
+/* @layer utilities {
     .custom-mask-button {
         -webkit-mask: url("https://raw.githubusercontent.com/robin-dela/css-mask-animation/master/img/nature-sprite.png");
         mask: url("https://raw.githubusercontent.com/robin-dela/css-mask-animation/master/img/nature-sprite.png");
@@ -123,9 +121,9 @@ a {
         animation: ani 0.7s steps(22) forwards;
         color: white;
     }
-}
+} */
 
-@keyframes ani {
+/* @keyframes ani {
     from {
         -webkit-mask-position: 0 0;
         mask-position: 0 0;
@@ -135,9 +133,9 @@ a {
         -webkit-mask-position: 100% 0;
         mask-position: 100% 0;
     }
-}
+} */
 
-@keyframes ani2 {
+/* @keyframes ani2 {
     from {
         -webkit-mask-position: 100% 0;
         mask-position: 100% 0;
@@ -147,5 +145,5 @@ a {
         -webkit-mask-position: 0 0;
         mask-position: 0 0;
     }
-}
+} */
 /* ///////////////////////////////////// */

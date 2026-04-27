@@ -130,7 +130,7 @@ export const VacancyItem = () => {
                         </button>
                     </div>
                 </section>
-                {showModal && <VacancyForms setShowModal={setShowModal}/>}
+                {showModal && <VacancyForms setShowModal={setShowModal} id={id}/>}
             </main>
             <Footer/>
         </>

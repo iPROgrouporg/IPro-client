@@ -22,7 +22,6 @@ const LangDropdown = ({ openDropdown, setOpenDropdown }) => {
   return (
     <div className="relative dropdown flex items-center">
 
-      {/* BUTTON */}
       <button
         onClick={() =>
           setOpenDropdown(openDropdown === "lang" ? null : "lang")
@@ -36,7 +35,6 @@ const LangDropdown = ({ openDropdown, setOpenDropdown }) => {
         />
       </button>
 
-      {/* DROPDOWN */}
       {openDropdown === "lang" && (
         <div className="absolute  top-full left-1/2 -translate-x-1/2 mt-2 w-10 z-50">
           <div className="py-2 px-2 bg-[#16182B] rounded-none flex flex-col gap-2 items-center">

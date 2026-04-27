@@ -10,7 +10,6 @@ export const OrderForms = ({ setShowModal, service }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // 🔥 NEW: cashback state
   const [cashback, setCashback] = useState(0);
 
   const [form, setForm] = useState({
@@ -21,11 +20,10 @@ export const OrderForms = ({ setShowModal, service }) => {
     useCashback: false,
   });
 
-  // ================= GET CASHBACK =================
   useEffect(() => {
     const getCashback = async () => {
       try {
-        const res = await axios.get("/api/user/me"); // o‘zingni endpoint
+        const res = await axios.get("/api/user/me"); 
         setCashback(res.data?.cashback || 0);
       } catch (err) {
         console.log(err);
@@ -35,7 +33,6 @@ export const OrderForms = ({ setShowModal, service }) => {
     getCashback();
   }, []);
 
-  // ================= INPUT =================
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -45,7 +42,6 @@ export const OrderForms = ({ setShowModal, service }) => {
     }));
   };
 
-  // 🔥 NEW: CALCULATION
   const cashbackUsed = form.useCashback
     ? Math.min(Number(form.orderAmount || 0), cashback)
     : 0;
@@ -53,7 +49,6 @@ export const OrderForms = ({ setShowModal, service }) => {
   const remaining =
     Number(form.orderAmount || 0) - cashbackUsed;
 
-  // ================= SUBMIT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -92,7 +87,6 @@ export const OrderForms = ({ setShowModal, service }) => {
 
       <div className="relative w-full max-w-2xl rounded-2xl bg-[#0f172a] text-white shadow-2xl">
 
-        {/* HEADER */}
         <div className="flex justify-between items-center p-5 border-b border-white/10">
           <h2 className="text-xl font-bold">
             {service?.title || "Buyurtma berish"}
@@ -103,18 +97,15 @@ export const OrderForms = ({ setShowModal, service }) => {
           </button>
         </div>
 
-        {/* ERROR */}
         {error && (
           <p className="text-center text-red-400 mt-3">{error}</p>
         )}
 
-        {/* FORM */}
         <form
           onSubmit={handleSubmit}
           className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-5"
         >
 
-          {/* COMPANY */}
           <input
             name="companyName"
             value={form.companyName}
@@ -123,7 +114,6 @@ export const OrderForms = ({ setShowModal, service }) => {
             className="px-4 py-2 rounded-lg bg-white/5 border border-white/10"
           />
 
-          {/* AMOUNT */}
           <input
             name="orderAmount"
             value={form.orderAmount}
@@ -132,7 +122,6 @@ export const OrderForms = ({ setShowModal, service }) => {
             className="px-4 py-2 rounded-lg bg-white/5 border border-white/10"
           />
 
-          {/* DEADLINE */}
           <input
             type="text"
             placeholder={t("deadline")}
@@ -142,7 +131,6 @@ export const OrderForms = ({ setShowModal, service }) => {
             className="px-4 py-2 rounded-lg bg-white/5 border border-white/10"
           />
 
-          {/* CASHBACK */}
           <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"
@@ -153,7 +141,6 @@ export const OrderForms = ({ setShowModal, service }) => {
             {t("useCashback")} ({cashback}$)
           </label>
 
-          {/* 🔥 CASHBACK INFO */}
           {form.useCashback && (
             <div className="sm:col-span-2 text-sm space-y-1">
               <p className="text-green-400">
@@ -172,7 +159,6 @@ export const OrderForms = ({ setShowModal, service }) => {
             </div>
           )}
 
-          {/* DESCRIPTION */}
           <textarea
             name="description"
             value={form.description}
@@ -181,7 +167,6 @@ export const OrderForms = ({ setShowModal, service }) => {
             className="sm:col-span-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10"
           />
 
-          {/* BUTTON */}
           <button
             type="submit"
             disabled={loading}
